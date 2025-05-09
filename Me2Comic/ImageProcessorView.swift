@@ -26,7 +26,7 @@ struct ImageProcessorView: View {
     @State private var quality: String = "85"
     @State private var threadCount: Int = 2
     @State private var unsharpRadius: String = "1.5"
-    @State private var useGrayColorspace: Bool = false
+    @State private var useGrayColorspace: Bool = true
     @State private var unsharpSigma: String = "1"
     @State private var unsharpAmount: String = "0.7"
     @State private var unsharpThreshold: String = "0.02"
