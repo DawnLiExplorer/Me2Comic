@@ -1,0 +1,121 @@
+/* 
+  Localizable.strings
+  Me2Comic
+
+  Created by me2 on 2025/5/6.
+  
+*/
+
+"Select Language" = "选择语言：";
+
+/* Left panel build version */
+"BuildVersionLabel" = "Build %@";
+"BuildVersionDefault" = "穆夏";
+
+"Input Directory" = "输入目录: %1$@";
+"Output Directory" = "输出目录: %1$@";
+"Input Directory Placeholder" = "（待处理文件夹都放到同一级目录下）";
+"Output Directory Placeholder" = "（会自动按原目录名称建立对应目录）";
+
+/* Parameter input titles */
+"WidthUnder" = "宽度小于（像素）：";
+"ResizeHeight" = "Resize 高度（像素）：";
+"OutputQuality" = "输出质量（%）：";
+"UnsharpRadius" = "Unsharp Radius：";
+"UnsharpSigma" = "Unsharp Sigma：";
+"UnsharpAmount" = "Unsharp Amount：";
+"UnsharpThreshold" = "Unsharp Threshold：";
+"ThreadCount" = "并行线程数：";
+"GrayColorspace" = "灰度色彩空间：";
+
+/* Parameter description section */
+"ParamDesc" = "参数说明：";
+"UnderWidth" = "宽度阈值：";
+"ResizeH" = "Resize高度：";
+"Quality" = "输出质量：";
+"Unsharp" = "Unsharp：";
+"Radius" = "Radius：";
+"Sigma" = "Sigma：";
+"Amount" = "Amount：";
+"Thresh" = "Threshold：";
+"Threads" = "线程数：";
+"Gray" = "Gray：";
+
+/* Parameter descriptions */
+"UnderWidthDesc" = "宽度小于此值时直接转换，否则均分裁切为左右两部分";
+"ResizeHDesc" = "按屏幕高像素设置，例如Kindle Paperwhite 5屏幕分辨率为1236x1648，（锁定高度按比例缩放）";
+"QualityDesc" = "JPG压缩质量（1-100），值越高质量越好但文件越大";
+"UnsharpDesc" = "优化图片细节表现，例如提升墨水屏图片显示效果。Amount=0时会禁用所有Unsharp参数。默认值：1.5×1.0+0.7+0.02";
+"RadiusDesc" = "锐化半径，控制影响的区域大小";
+"SigmaDesc" = "锐化模糊半径，越大锐化效果越柔和";
+"AmountDesc" = "锐化量，控制锐化效果的强度";
+"ThreshDesc" = "锐化阈值，只对高于此值的边缘进行锐化";
+"ThreadsDesc" = "并行处理图片的线程数量，非CPU核心数量";
+"GrayDesc" = "on=转换至灰度空间（8-bit），off=保留原始色彩空间";
+
+/* Log messages for directory selection */
+"SelectedInputDir" = "已选择输入目录: %@";
+"SelectedOutputDir" = "已选择输出目录: %@";
+
+/* Log messages for processImages */
+"NoInputOrOutputDir" = "错误：未选择输入或输出目录";
+"NotificationPermissionFailed" = "错误：请求通知权限失败：%@";
+"NotificationPermissionNotGranted" = "警告：通知权限未授予，通知可能无法显示";
+
+/* Log messages for parameter validation errors */
+"InvalidWidthThreshold" = "错误：宽度阈值必须为正整数";
+"InvalidResizeHeight" = "错误：Resize 高度必须为正整数";
+"InvalidOutputQuality" = "错误：输出质量必须为 1 到 100 的整数";
+"InvalidUnsharpParameters" = "错误：Unsharp 参数必须为非负数";
+
+/* Log messages for starting image processing and GraphicsMagick check */
+"StartProcessingWithUnsharp" = "开始处理图片，宽度阈值：%d，Resize 高度：%d，输出质量：%d，线程数：%d，Unsharp：%.1fx%.1f+%.1f+%.2f，Colorspace GRAY：%@";
+"StartProcessingNoUnsharp" = "开始处理图片，宽度阈值：%d，Resize 高度：%d，输出质量：%d，线程数：%d，Unsharp：禁用";
+"GraphicsMagickNotInstalled" = "错误：GraphicsMagick 未安装于 %@";
+/* Gray colorspace states */
+"GrayEnabled" = "启用";
+"GrayDisabled" = "关闭";
+
+/* Log messages for GraphicsMagick and output directory errors */
+"CannotReadOutput" = "无法读取输出";
+"GraphicsMagickRunFailed" = "错误：运行 GraphicsMagick 失败：%@";
+"GraphicsMagickVersion" = "GraphicsMagick 版本：%@";
+"CannotRunGraphicsMagick" = "错误：无法运行 GraphicsMagick：%@";
+"CannotCreateOutputDir" = "错误：无法创建输出目录：%@";
+
+/* Log messages for asynchronous image processing */
+"CancelProcessingImage" = "取消处理图片：%@";
+"ProcessingCancelledNoStart" = "处理被取消，未开始任何图片处理";
+"ProcessingCancelledSubdir" = "处理被取消，停止子目录处理";
+"StartProcessingSubdir" = "开始处理子目录：%@";
+"ProcessingCancelledFiles" = "处理被取消，停止文件处理";
+"CompleteProcessingSubdir" = "完成处理子目录：%@";
+"SubdirProcessingFailed" = "错误：处理子目录 %@ 失败：%@";
+"CannotReadInputDir" = "错误：无法读取输入目录：%@";
+
+/* Log messages for stopping processing */
+"StopProcessingSuccess" = "成功停止所有处理操作";
+"StopProcessingFailed" = "警告：停止处理进程失败：%@";
+"CannotExecuteStopCommand" = "错误：无法执行 终止 命令：%@";
+"ProcessingStopped" = "处理已停止";
+
+/* Unknown error */
+"UnknownError" = "未知错误";
+
+/* Log messages for processing completion */
+"FailedFilesList" = "以下文件处理失败：";
+"TotalImagesProcessed" = "共处理 %d 张图片";
+"ProcessingCompleted" = "处理完成";
+/* Notification messages */
+"ProcessingTimeSeconds" = "总处理时间: %d秒";
+"ProcessingTimeMinutes" = "总处理时间: %d分钟";
+"TaskCompletedTitle" = "任务完成";
+"TaskCompletedBody" = "图片处理已完成";
+
+/* Log messages for image dimension errors */
+"CannotGetImageDimensions" = "错误：无法获取 %@ 尺寸";
+"ProcessSingleImageFailed" = "错误：处理 %@ 失败：%@";
+"ProcessImagePart1Failed" = "错误：处理 %@ 到 %@-1.jpg 失败：%@";
+"CancelProcessImagePart2" = "取消处理图片：%@ 的第二部分";
+"ProcessImagePart2Failed" = "错误：处理 %@ 到 %@-2.jpg 失败：%@";
+"ProcessImageFailed" = "错误：处理 %@ 失败：%@";

@@ -1,0 +1,121 @@
+/* 
+  Localizable.strings
+  Me2Comic
+
+  Created by me2 on 2025/5/6.
+  
+*/
+
+"Select Language" = "Language:";
+
+/* Left panel build version */
+"BuildVersionLabel" = "Build %@";
+"BuildVersionDefault" = "Mucha";
+
+"Input Directory" = "Input Directory: %1$@";
+"Output Directory" = "Output Directory: %1$@";
+"Input Directory Placeholder" = "(Folders to be processed should reside in the same parent directory)";
+"Output Directory Placeholder" = "(Corresponding directories will be created automatically based on the original directory names)";
+
+/* Parameter input titles */
+"WidthUnder" = "Width Under (px):";
+"ResizeHeight" = "Resize Height (px):";
+"OutputQuality" = "Output Quality (%):";
+"UnsharpRadius" = "Unsharp Radius:";
+"UnsharpSigma" = "Unsharp Sigma:";
+"UnsharpAmount" = "Unsharp Amount:";
+"UnsharpThreshold" = "Unsharp Threshold:";
+"ThreadCount" = "Thread Count:";
+"GrayColorspace" = "Grayscale Mode:";
+
+/* Parameter description section */
+"ParamDesc" = "Parameter Description:";
+"UnderWidth" = "UnderWidth:";
+"ResizeH" = "Resize Height:";
+"Quality" = "Output Quality:";
+"Unsharp" = "Unsharp:";
+"Radius" = "Radius:";
+"Sigma" = "Sigma:";
+"Amount" = "Amount:";
+"Thresh" = "Threshold:";
+"Threads" = "Thread Count:";
+"Gray" = "Gray:";
+
+/* Parameter descriptions */
+"UnderWidthDesc" = "Images with width less than this value are converted directly; otherwise, they are split into left and right parts";
+"ResizeHDesc" = "Scales proportionally by locking height";
+"QualityDesc" = "JPG quality (1-100): Better quality means larger files";
+"UnsharpDesc" = "Unsharp Mask is disabled when Amount is 0";
+"RadiusDesc" = "Controls the size of the affected area, affecting nearby pixels";
+"SigmaDesc" = "Larger values create softer edges";
+"AmountDesc" = "Controls the effect strength, higher values enhance edges";
+"ThreshDesc" = "Controls the minimum edge contrast to apply sharpening";
+"ThreadsDesc" = "Number of threads used in parallel (not CPU core count)";
+"GrayDesc" = "ON = Convert to grayscale (8-bit); OFF = Retain original color space";
+
+/* Log messages for directory selection */
+"SelectedInputDir" = "Selected input directory: %@";
+"SelectedOutputDir" = "Selected output directory: %@";
+
+/* Log messages for processImages */
+"NoInputOrOutputDir" = "Error: Input or output directory not selected";
+"NotificationPermissionFailed" = "Error: Failed to request notification permission: %@";
+"NotificationPermissionNotGranted" = "Warning: Notification permission not granted, notifications may not display";
+
+/* Log messages for parameter validation errors */
+"InvalidWidthThreshold" = "Error: Width threshold must be a positive integer";
+"InvalidResizeHeight" = "Error: Resize height must be a positive integer";
+"InvalidOutputQuality" = "Error: Output quality must be an integer between 1 and 100";
+"InvalidUnsharpParameters" = "Error: Unsharp parameters must be non-negative";
+
+/* Log messages for starting image processing and GraphicsMagick check */
+"StartProcessingWithUnsharp" = "Starting image processing, Width threshold: %d, Resize height: %d, Output quality: %d, Threads: %d, Unsharp: %.1fx%.1f+%.1f+%.2f, Colorspace GRAY: %@";
+"StartProcessingNoUnsharp" = "Starting image processing, Width threshold: %d, Resize height: %d, Output quality: %d, Threads: %d, Unsharp: Disabled";
+"GraphicsMagickNotInstalled" = "Error: GraphicsMagick not installed at %@";
+/* Gray colorspace states */
+"GrayEnabled" = "Enabled";
+"GrayDisabled" = "Disabled";
+
+/* Log messages for GraphicsMagick and output directory errors */
+"CannotReadOutput" = "Cannot read output";
+"GraphicsMagickRunFailed" = "Error: Failed to run GraphicsMagick: %@";
+"GraphicsMagickVersion" = "GraphicsMagick version: %@";
+"CannotRunGraphicsMagick" = "Error: Cannot run GraphicsMagick: %@";
+"CannotCreateOutputDir" = "Error: Cannot create output directory: %@";
+
+/* Log messages for asynchronous image processing */
+"CancelProcessingImage" = "Cancelled processing image: %@";
+"ProcessingCancelledNoStart" = "Processing cancelled, no images processed";
+"ProcessingCancelledSubdir" = "Processing cancelled, stopped subdirectory processing";
+"StartProcessingSubdir" = "Starting processing subdirectory: %@";
+"ProcessingCancelledFiles" = "Processing cancelled, stopped file processing";
+"CompleteProcessingSubdir" = "Completed processing subdirectory: %@";
+"SubdirProcessingFailed" = "Error: Failed to process subdirectory %@: %@";
+"CannotReadInputDir" = "Error: Cannot read input directory: %@";
+
+/* Log messages for stopping processing */
+"StopProcessingSuccess" = "Successfully stopped all processing operations";
+"StopProcessingFailed" = "Warning: Failed to stop processing: %@";
+"CannotExecuteStopCommand" = "Error: Cannot execute stop command: %@";
+"ProcessingStopped" = "Processing stopped";
+
+/* Unknown error */
+"UnknownError" = "Unknown error";
+
+/* Log messages for processing completion */
+"FailedFilesList" = "The following files failed to process:";
+"TotalImagesProcessed" = "Processed %d images";
+"ProcessingCompleted" = "Processing completed";
+/* Notification messages */
+"ProcessingTimeSeconds" = "Total processing time: %d seconds";
+"ProcessingTimeMinutes" = "Total processing time: %d minutes";
+"TaskCompletedTitle" = "Task Completed";
+"TaskCompletedBody" = "Image processing completed";
+
+/* Log messages for image dimension errors */
+"CannotGetImageDimensions" = "Error: Cannot get dimensions for %@";
+"ProcessSingleImageFailed" = "Error: Processing %@ failed: %@";
+"ProcessImagePart1Failed" = "Error: Processing %@ to %@-1.jpg failed: %@";
+"CancelProcessImagePart2" = "Cancelled processing image: %@ part 2";
+"ProcessImagePart2Failed" = "Error: Processing %@ to %@-2.jpg failed: %@";
+"ProcessImageFailed" = "Error: Processing %@ failed: %@";
