@@ -160,9 +160,9 @@ struct ImageProcessorView: View {
         }
 
         // 清空任务列表
-        objc_sync_enter(activeTasks)
-        activeTasks.removeAll()
-        objc_sync_exit(activeTasks)
+        DispatchQueue.main.async {
+            activeTasks.removeAll()
+        }
 
         DispatchQueue.main.async {
             appendLog(NSLocalizedString("ProcessingStopped", comment: "") + "\n")
@@ -304,7 +304,7 @@ struct ImageProcessorView: View {
     
             // 创建并发队列，限制最大并发数
             let processingQueue = DispatchQueue(label: "me2.comic.me2comic.processing", qos: .userInitiated, attributes: [.concurrent], target: .global(qos: .userInitiated))
-            let group = DispatchGroup()
+            let group = DispatchGroup() // 使用线程组跟踪所有任务
             let semaphore = DispatchSemaphore(value: threadCount) // 限制并发线程数
     
             do {
@@ -475,9 +475,7 @@ struct ImageProcessorView: View {
                 magickTask.standardError = errorPipe
     
                 DispatchQueue.main.async {
-                    objc_sync_enter(activeTasks)
                     activeTasks.append(magickTask)
-                    objc_sync_exit(activeTasks)
                 }
     
                 do {
@@ -506,7 +504,7 @@ struct ImageProcessorView: View {
                 var arguments1 = [
                     "convert",
                     imageURL.path,
-                    "-crop", "\(cropWidth)x\(height)+\(cropWidth)+0",
+                    "-crop", "\(cropWidth)x\(height)+\(cropWidth)+0", // 右半部分 从宽度cropWidth位置开始裁剪
                     "-resize", "x\(resizeHeight)"
                 ]
                 if useGrayColorspace {
@@ -525,9 +523,7 @@ struct ImageProcessorView: View {
                 magickTask1.standardError = errorPipe1
     
                 DispatchQueue.main.async {
-                    objc_sync_enter(activeTasks)
                     activeTasks.append(magickTask1)
-                    objc_sync_exit(activeTasks)
                 }
     
                 try magickTask1.run()
@@ -553,7 +549,7 @@ struct ImageProcessorView: View {
                 var arguments2 = [
                     "convert",
                     imageURL.path,
-                    "-crop", "\(cropWidth)x\(height)+0+0",
+                    "-crop", "\(cropWidth)x\(height)+0+0", // 左半部分
                     "-resize", "x\(resizeHeight)"
                 ]
                 if useGrayColorspace {
@@ -572,9 +568,7 @@ struct ImageProcessorView: View {
                 magickTask2.standardError = errorPipe2
     
                 DispatchQueue.main.async {
-                    objc_sync_enter(activeTasks)
                     activeTasks.append(magickTask2)
-                    objc_sync_exit(activeTasks)
                 }
     
                 try magickTask2.run()
