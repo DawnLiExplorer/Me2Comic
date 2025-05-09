@@ -9,6 +9,12 @@ import Foundation
 import SwiftUI
 import UserNotifications
 
+// Active tasks list (SwiftUI state)
+struct ManagedTask: Identifiable {
+    let id = UUID()
+    let process: Process
+}
+
 struct ImageProcessorView: View {
     @State private var inputDirectory: URL?
     @State private var outputDirectory: URL?
@@ -26,7 +32,7 @@ struct ImageProcessorView: View {
     @State private var unsharpThreshold: String = "0.02"
     @State private var totalImagesProcessed: Int = 0
     @State private var processingStartTime: Date?
-    @State private var activeTasks: [Process] = []
+    @State private var activeTasks: [ManagedTask] = []
 
     var body: some View {
         HStack(alignment: .top, spacing: 0) {
@@ -138,35 +144,19 @@ struct ImageProcessorView: View {
     private func stopProcessing() {
         shouldCancelProcessing = true
  
-        let killTask = Process()
-        killTask.executableURL = URL(fileURLWithPath: "/bin/sh")
-        killTask.arguments = ["-c", "killall -KILL gm"]
-        let pipe = Pipe()
-        killTask.standardOutput = pipe
-        killTask.standardError = pipe
-    
-        do {
-            try killTask.run()
-            killTask.waitUntilExit()
-            if killTask.terminationStatus == 0 {
-                appendLog(NSLocalizedString("StopProcessingSuccess", comment: "") + "\n")
-            } else {
-                let errorData = pipe.fileHandleForReading.readDataToEndOfFile()
-                let errorMessage = String(data: errorData, encoding: .utf8) ?? NSLocalizedString("UnknownError", comment: "")
-                appendLog(String(format: NSLocalizedString("StopProcessingFailed", comment: ""), errorMessage) + "\n")
+         DispatchQueue.global(qos: .userInitiated).async {
+            for task in activeTasks {
+                if task.process.isRunning {
+                    task.process.terminate()
+                    task.process.waitUntilExit()
+                }
             }
-        } catch {
-            appendLog(String(format: NSLocalizedString("CannotExecuteStopCommand", comment: ""), error.localizedDescription) + "\n")
-        }
 
-        // 清空任务列表
-        DispatchQueue.main.async {
-            activeTasks.removeAll()
-        }
-
-        DispatchQueue.main.async {
-            appendLog(NSLocalizedString("ProcessingStopped", comment: "") + "\n")
-            isProcessing = false
+         DispatchQueue.main.async {
+                activeTasks.removeAll()
+                appendLog(NSLocalizedString("ProcessingStopped", comment: "") + "\n")
+                isProcessing = false
+            }
         }
     }
     
@@ -475,7 +465,7 @@ struct ImageProcessorView: View {
                 magickTask.standardError = errorPipe
     
                 DispatchQueue.main.async {
-                    activeTasks.append(magickTask)
+                    activeTasks.append(ManagedTask(process: magickTask))
                 }
     
                 do {
@@ -523,7 +513,7 @@ struct ImageProcessorView: View {
                 magickTask1.standardError = errorPipe1
     
                 DispatchQueue.main.async {
-                    activeTasks.append(magickTask1)
+                    activeTasks.append(ManagedTask(process: magickTask1))
                 }
     
                 try magickTask1.run()
@@ -568,7 +558,7 @@ struct ImageProcessorView: View {
                 magickTask2.standardError = errorPipe2
     
                 DispatchQueue.main.async {
-                    activeTasks.append(magickTask2)
+                    activeTasks.append(ManagedTask(process: magickTask2))
                 }
     
                 try magickTask2.run()
