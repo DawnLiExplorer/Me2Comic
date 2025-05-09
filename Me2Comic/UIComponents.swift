@@ -235,6 +235,7 @@ struct ActionButtonView: View {
 // 日志区
 struct LogView: View {
     let logMessage: String
+    @State private var selectableText: String = ""
 
     var body: some View {
         ZStack {
@@ -247,11 +248,17 @@ struct LogView: View {
             // 日志内容层（置于上层）
             ScrollView {
                 Text(logMessage)
+                    .font(.system(size: 12, design: .monospaced))
+                    .foregroundColor(.textSecondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal, 10)
                     .padding(.top, 10)
-                    .foregroundColor(.textSecondary)
+                    .textSelection(.enabled) // 启用原生文本选择
                     .id("log")
+                    .background(
+                        // 透明点击区域（解决窗口拖动冲突）
+                        Color.clear.contentShape(Rectangle())
+                    )
             }
         }
         .background(.backgroundPrimary)
@@ -262,6 +269,12 @@ struct LogView: View {
         )
         .shadow(color: .accent.opacity(0.4), radius: 8, x: 0, y: 4)
         .padding(.trailing, 1)
+        .onAppear {
+            selectableText = logMessage // 初始化可选中文本
+        }
+        .onChange(of: logMessage) { newValue in
+            selectableText = newValue // 动态更新可选中文本
+        }
     }
 }
 
