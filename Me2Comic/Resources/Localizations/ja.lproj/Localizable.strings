@@ -77,9 +77,10 @@
 "GrayDisabled" = "無効";
 
 /* Log messages for GraphicsMagick and output directory errors */
-"CannotReadOutput" = "出力読み込み不可";
+"CannotReadOutput" = "プログラムの出力を読み取れません";
+"WhichGMException" = "エラー：'which gm' の実行に失敗しました：%@";
+"WhichGMFailed" = "エラー：'which gm' の実行が失敗したか、空の結果を返しました。";
 "GraphicsMagickRunFailed" = "エラー：GraphicsMagick実行失敗: %@";
-"UnknownError" = "不明なエラー";
 "GraphicsMagickVersion" = "GraphicsMagickバージョン: %@";
 "CannotRunGraphicsMagick" = "エラー：GraphicsMagick起動失敗: %@";
 "CannotCreateOutputDir" = "エラー：出力ディレクトリ作成失敗: %@";
@@ -99,6 +100,9 @@
 "StopProcessingFailed" = "警告：プロセス停止失敗: %@";
 "CannotExecuteStopCommand" = "エラー：停止コマンド実行不可: %@";
 "ProcessingStopped" = "処理停止完了";
+
+/* Unknown error */
+"UnknownError" = "不明なエラー";
 
 /* Log messages for processing completion */
 "FailedFilesList" = "処理失敗ファイル一覧：";

@@ -33,6 +33,44 @@ struct ImageProcessorView: View {
     @State private var totalImagesProcessed: Int = 0
     @State private var processingStartTime: Date?
     @State private var activeTasks: [ManagedTask] = []
+    @State private var gmPath: String = ""
+
+    private func detectGMPathViaWhich() -> String? {
+        let whichTask = Process()
+        whichTask.executableURL = URL(fileURLWithPath: "/usr/bin/which")
+        whichTask.arguments = ["gm"]
+    
+        var env = ProcessInfo.processInfo.environment
+        let homebrewPaths = ["/opt/homebrew/bin", "/usr/local/bin"]
+        let originalPath = env["PATH"] ?? ""
+        env["PATH"] = homebrewPaths.joined(separator: ":") + ":" + originalPath
+        whichTask.environment = env
+    
+        let pipe = Pipe()
+        whichTask.standardOutput = pipe
+        whichTask.standardError = pipe // Capture stderr
+    
+        do {
+            try whichTask.run()
+            whichTask.waitUntilExit()
+        
+            let data = pipe.fileHandleForReading.readDataToEndOfFile()
+            guard whichTask.terminationStatus == 0,
+                  let output = String(data: data, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines),
+                  !output.isEmpty
+            else {
+                // Read error message from the pipe
+                let errorData = pipe.fileHandleForReading.readDataToEndOfFile()
+                let errorMessage = String(data: errorData, encoding: .utf8) ?? NSLocalizedString("UnknownError", comment: "")
+                appendLog(String(format: NSLocalizedString("WhichGMException", comment: ""), errorMessage) + "\n")
+                return nil
+            }
+            return output
+        } catch {
+            appendLog(NSLocalizedString("WhichGMFailed", comment: "") + "\n")
+            return nil
+        }
+    }
 
     var body: some View {
         HStack(alignment: .top, spacing: 0) {
@@ -140,11 +178,12 @@ struct ImageProcessorView: View {
             logMessage += message // 直接追加到主日志
         }
     }
-    
+
+    // 停止函数
     private func stopProcessing() {
         shouldCancelProcessing = true
  
-         DispatchQueue.global(qos: .userInitiated).async {
+        DispatchQueue.global(qos: .userInitiated).async {
             for task in activeTasks {
                 if task.process.isRunning {
                     task.process.terminate()
@@ -152,7 +191,7 @@ struct ImageProcessorView: View {
                 }
             }
 
-         DispatchQueue.main.async {
+            DispatchQueue.main.async {
                 activeTasks.removeAll()
                 appendLog(NSLocalizedString("ProcessingStopped", comment: "") + "\n")
                 isProcessing = false
@@ -225,18 +264,18 @@ struct ImageProcessorView: View {
                              threshold, resize, qual, threadCount) + "\n")
         }
 
-        // 检查 ImageMagick
-        let magickPath = "/usr/local/bin/gm"
-        if !FileManager.default.fileExists(atPath: magickPath) {
+        // 检查 GraphicsMagick
+        guard let detectedPath = detectGMPathViaWhich() else {
             DispatchQueue.main.async {
-                appendLog(String(format: NSLocalizedString("GraphicsMagickNotInstalled", comment: ""), magickPath) + "\n")
+                appendLog(NSLocalizedString("CannotRunGraphicsMagick", comment: "") + "\n")
                 isProcessing = false
             }
             return
         }
+        gmPath = detectedPath
 
         let task = Process()
-        task.executableURL = URL(fileURLWithPath: magickPath)
+        task.executableURL = URL(fileURLWithPath: gmPath)
         task.arguments = ["--version"]
         let pipe = Pipe()
         task.standardOutput = pipe
@@ -248,10 +287,8 @@ struct ImageProcessorView: View {
             let outputData = pipe.fileHandleForReading.readDataToEndOfFile()
             let outputMessage = String(data: outputData, encoding: .utf8) ?? NSLocalizedString("CannotReadOutput", comment: "")
             if task.terminationStatus != 0 {
-                let errorData = pipe.fileHandleForReading.readDataToEndOfFile()
-                let errorMessage = String(data: errorData, encoding: .utf8) ?? NSLocalizedString("UnknownError", comment: "")
                 DispatchQueue.main.async {
-                    appendLog(String(format: NSLocalizedString("GraphicsMagickRunFailed", comment: ""), errorMessage) + "\n")
+                    appendLog(String(format: NSLocalizedString("GraphicsMagickRunFailed", comment: ""), outputMessage) + "\n")
                     isProcessing = false
                 }
                 return
@@ -397,6 +434,7 @@ struct ImageProcessorView: View {
         }
     }
     
+    // 单张图片处理方法
     private func processImage(_ imageURL: URL, outputDir: URL, failedFiles: inout [String], widthThreshold: Int, resizeHeight: Int, quality: Int, unsharpRadius: Float, unsharpSigma: Float, unsharpAmount: Float, unsharpThreshold: Float) {
         guard !shouldCancelProcessing else {
             DispatchQueue.main.async {
@@ -410,7 +448,7 @@ struct ImageProcessorView: View {
         let outputPath = outputDir.appendingPathComponent(filenameNoExt).path
     
         let task = Process()
-        task.executableURL = URL(fileURLWithPath: "/usr/local/bin/gm")
+        task.executableURL = URL(fileURLWithPath: gmPath)
         task.arguments = ["identify", "-format", "%w %h", imageURL.path]
         let pipe = Pipe()
         task.standardOutput = pipe
@@ -459,7 +497,7 @@ struct ImageProcessorView: View {
                 ]
     
                 let magickTask = Process()
-                magickTask.executableURL = URL(fileURLWithPath: "/usr/local/bin/gm")
+                magickTask.executableURL = URL(fileURLWithPath: gmPath)
                 magickTask.arguments = arguments
                 let errorPipe = Pipe()
                 magickTask.standardError = errorPipe
@@ -507,7 +545,7 @@ struct ImageProcessorView: View {
                 ]
     
                 let magickTask1 = Process()
-                magickTask1.executableURL = URL(fileURLWithPath: "/usr/local/bin/gm")
+                magickTask1.executableURL = URL(fileURLWithPath: gmPath)
                 magickTask1.arguments = arguments1
                 let errorPipe1 = Pipe()
                 magickTask1.standardError = errorPipe1
@@ -552,7 +590,7 @@ struct ImageProcessorView: View {
                 ]
     
                 let magickTask2 = Process()
-                magickTask2.executableURL = URL(fileURLWithPath: "/usr/local/bin/gm")
+                magickTask2.executableURL = URL(fileURLWithPath: gmPath)
                 magickTask2.arguments = arguments2
                 let errorPipe2 = Pipe()
                 magickTask2.standardError = errorPipe2

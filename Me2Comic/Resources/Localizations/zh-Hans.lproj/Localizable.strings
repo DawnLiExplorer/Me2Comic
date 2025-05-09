@@ -77,7 +77,9 @@
 "GrayDisabled" = "关闭";
 
 /* Log messages for GraphicsMagick and output directory errors */
-"CannotReadOutput" = "无法读取输出";
+"CannotReadOutput" = "无法读取程序输出";
+"WhichGMException" = "错误：执行 'which gm' 命令失败：%@";
+"WhichGMFailed" = "错误：'which gm' 命令失败或返回空。";
 "GraphicsMagickRunFailed" = "错误：运行 GraphicsMagick 失败：%@";
 "GraphicsMagickVersion" = "GraphicsMagick 版本：%@";
 "CannotRunGraphicsMagick" = "错误：无法运行 GraphicsMagick：%@";
