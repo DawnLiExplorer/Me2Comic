@@ -56,6 +56,7 @@
 /* Log messages for directory selection */
 "SelectedInputDir" = "入力ディレクトリ選択済: %@";
 "SelectedOutputDir" = "出力ディレクトリ選択済: %@";
+"Open" = "開く";
 
 /* Log messages for processImages */
 "NoInputOrOutputDir" = "エラー：入力/出力ディレクトリ未指定";

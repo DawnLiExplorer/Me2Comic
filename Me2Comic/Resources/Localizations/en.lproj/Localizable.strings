@@ -56,6 +56,7 @@
 /* Log messages for directory selection */
 "SelectedInputDir" = "Selected input directory: %@";
 "SelectedOutputDir" = "Selected output directory: %@";
+"Open" = "Open";
 
 /* Log messages for processImages */
 "NoInputOrOutputDir" = "Error: Input or output directory not selected";

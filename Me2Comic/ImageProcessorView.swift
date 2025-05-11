@@ -81,19 +81,29 @@ struct ImageProcessorView: View {
             VStack(spacing: 25) {
                 Spacer().frame(height: 5)
                 
+                // Input Directory Button
                 DirectoryButtonView(
                     title: String(format: NSLocalizedString("Input Directory", comment: ""),
                                   inputDirectory?.path ?? NSLocalizedString("Input Directory Placeholder", comment: "")),
                     action: { selectInputDirectory() },
-                    isProcessing: isProcessing
+                    isProcessing: isProcessing,
+                    openAction: nil,
+                    showOpenButton: false
                 )
                 .padding(.top, -11)
 
+                // Output Directory Button
                 DirectoryButtonView(
                     title: String(format: NSLocalizedString("Output Directory", comment: ""),
                                   outputDirectory?.path ?? NSLocalizedString("Output Directory Placeholder", comment: "")),
                     action: { selectOutputDirectory() },
-                    isProcessing: isProcessing
+                    isProcessing: isProcessing,
+                    openAction: {
+                        if let url = outputDirectory {
+                            NSWorkspace.shared.open(url)
+                        }
+                    },
+                    showOpenButton: outputDirectory != nil
                 )
                 .padding(.bottom, 10)
                 

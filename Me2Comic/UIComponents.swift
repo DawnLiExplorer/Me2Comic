@@ -12,24 +12,60 @@ struct DirectoryButtonView: View {
     let title: String
     let action: () -> Void
     let isProcessing: Bool
+    let openAction: (() -> Void)?
+    let showOpenButton: Bool
+
+    @State private var isHovered: Bool = false
+    @State private var isMainButtonHovered: Bool = false
 
     var body: some View {
-        HStack {
+        HStack(spacing: 8) {
             Button(action: action) {
                 Text(title)
                     .foregroundColor(.textSecondary)
                     .lineLimit(1)
                     .truncationMode(.middle)
                     .padding(.vertical, 6)
-                    .padding(.horizontal, 15)
+                    .padding(.horizontal, 10)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(.backgroundPrimary.opacity(isProcessing ? 0.3 : 1)) // 按钮背景色，处理时半透明
+                        RoundedRectangle(cornerRadius: 4)
+                            .fill(.backgroundPrimary.opacity(isProcessing ? 0.3 : 1))
                     )
             }
             .buttonStyle(PlainButtonStyle())
             .disabled(isProcessing)
+            .overlay(
+                RoundedRectangle(cornerRadius: 4)
+                    .stroke(.accent.opacity(0.5), lineWidth: 1)
+                    .opacity(isMainButtonHovered && !isProcessing ? 1 : 0)
+            )
+            .onHover { hovering in
+                isMainButtonHovered = hovering
+            }
+
+            if showOpenButton && !isProcessing {
+                Button(action: openAction ?? {}) {
+                    Text(NSLocalizedString("Open", comment: ""))
+                        .font(.system(size: 12))
+                        .foregroundColor(.accent)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 6)
+                        .background(
+                            RoundedRectangle(cornerRadius: 4)
+                                .fill(Color.backgroundPrimary)
+                        )
+                }
+                .buttonStyle(PlainButtonStyle())
+                .overlay(
+                    RoundedRectangle(cornerRadius: 4)
+                        .stroke(.accent.opacity(0.5), lineWidth: 1)
+                        .opacity(isHovered ? 1 : 0)
+                )
+                .onHover { hovering in
+                    isHovered = hovering
+                }
+            }
         }
     }
 }
