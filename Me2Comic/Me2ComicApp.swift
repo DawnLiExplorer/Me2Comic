@@ -46,7 +46,17 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 struct AboutView: View {
     private let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
     private let buildVersion = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? NSLocalizedString("BuildVersionDefault", comment: "")
-    @State private var selectedLanguage: String = (UserDefaults.standard.array(forKey: "AppleLanguages")?.first as? String) ?? "zh-Hans"
+    @State private var selectedLanguage: String = {
+        if let savedLanguage = UserDefaults.standard.string(forKey: "SelectedLanguage") {
+            return savedLanguage
+        }
+
+        let systemLanguage = Locale.preferredLanguages.first ?? "en"
+        if systemLanguage.contains("zh-Hans") { return "zh-Hans" }
+        if systemLanguage.contains("zh-Hant") { return "zh-Hant" }
+        if systemLanguage.contains("ja") { return "ja" }
+        return "en"
+    }()
     
     var body: some View {
         VStack(spacing: 10) {
@@ -68,7 +78,7 @@ struct AboutView: View {
             
             Spacer().frame(height: 20)
             
-            HStack {
+            HStack(spacing: 5) {
                 Text(NSLocalizedString("Select Language", comment: ""))
                     .foregroundColor(.textPrimary)
                 Picker("", selection: $selectedLanguage) {
@@ -79,10 +89,10 @@ struct AboutView: View {
                 }
                 .pickerStyle(.menu)
                 .frame(width: 100)
-                .padding(.leading, -9) // 缩小间距
+                .offset(x: -5)
                 .onChange(of: selectedLanguage) { newValue in
+                    UserDefaults.standard.set(newValue, forKey: "SelectedLanguage")
                     UserDefaults.standard.set([newValue], forKey: "AppleLanguages")
-                    UserDefaults.standard.synchronize()
                 }
             }
             
