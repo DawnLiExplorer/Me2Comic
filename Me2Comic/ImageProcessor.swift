@@ -275,11 +275,15 @@ class ImageProcessor: ObservableObject {
                 if !self.shouldCancelProcessing {
                     // Log failed files
                     if !failedFiles.isEmpty {
-                        self.logMessages.append(NSLocalizedString("FailedFilesList", comment: "") + "\n")
+                        DispatchQueue.main.async {
+                            self.logMessages.append(NSLocalizedString("FailedFilesList", comment: "") + "\n")
+                        }
                         failedFiles.forEach { self.logMessages.append("- \($0)\n") }
                     }
                     // Log processing stats
-                    self.logMessages.append(String(format: NSLocalizedString("TotalImagesProcessed", comment: ""), self.totalImagesProcessed) + "\n")
+                    DispatchQueue.main.async {
+                        self.logMessages.append(String(format: NSLocalizedString("TotalImagesProcessed", comment: ""), self.totalImagesProcessed) + "\n")
+                    }
                     // Timer
                     if let startTime = self.processingStartTime {
                         let elapsedTime = Date().timeIntervalSince(startTime)

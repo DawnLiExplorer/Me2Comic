@@ -107,13 +107,16 @@ struct ImageProcessorView: View {
         .frame(minWidth: 996, minHeight: 735) // Sets min window size
         .background(.panelBackground)
         .onAppear {
-            // Request notification permission
             let center = UNUserNotificationCenter.current()
             center.requestAuthorization(options: [.alert, .sound]) { granted, error in
                 if let error = error {
-                    processor.logMessages.append(String(format: NSLocalizedString("NotificationPermissionFailed", comment: ""), error.localizedDescription) + "\n")
+                    DispatchQueue.main.async {
+                        processor.logMessages.append(String(format: NSLocalizedString("NotificationPermissionFailed", comment: ""), error.localizedDescription) + "\n")
+                    }
                 } else if !granted {
-                    processor.logMessages.append(NSLocalizedString("NotificationPermissionNotGranted", comment: "") + "\n")
+                    DispatchQueue.main.async {
+                        processor.logMessages.append(NSLocalizedString("NotificationPermissionNotGranted", comment: "") + "\n")
+                    }
                 }
             }
         }
