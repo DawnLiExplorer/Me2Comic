@@ -17,7 +17,6 @@ struct Me2ComicApp: App {
             ImageProcessorView()
         }
         .windowResizability(.contentMinSize)
-        .defaultSize(width: 996, height: 735) // 默认窗口大小
         Settings {
             AboutView()
             //  .preferredColorScheme(.dark)
@@ -25,12 +24,7 @@ struct Me2ComicApp: App {
     }
 }
 
-class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
-    func windowShouldClose(_ sender: NSWindow) -> Bool {
-        NSApp.terminate(nil)
-        return true
-    }
-    
+class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApplication.shared.appearance = NSAppearance(named: .darkAqua)
     

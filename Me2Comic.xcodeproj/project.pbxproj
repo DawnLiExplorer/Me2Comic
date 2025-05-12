@@ -11,6 +11,7 @@
 		FCB9B0C82DBDFD4500110511 /* Me2ComicApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCB9B0C72DBDFD4500110511 /* Me2ComicApp.swift */; };
 		FCB9B0CA2DBDFD4500110511 /* ImageProcessorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCB9B0C92DBDFD4500110511 /* ImageProcessorView.swift */; };
 		FCB9B0CC2DBDFD4700110511 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FCB9B0CB2DBDFD4700110511 /* Assets.xcassets */; };
+		FCED85302DD1B89500E299D1 /* ImageProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCED852F2DD1B89500E299D1 /* ImageProcessor.swift */; };
 		FCF8E79E2DC9F8F60044291C /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = FCF8E7A02DC9F8F60044291C /* Localizable.strings */; };
 /* End PBXBuildFile section */
 
@@ -23,6 +24,7 @@
 		FCB9B0C92DBDFD4500110511 /* ImageProcessorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageProcessorView.swift; sourceTree = "<group>"; };
 		FCB9B0CB2DBDFD4700110511 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FCB9B0D02DBDFD4700110511 /* Me2Comic.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Me2Comic.entitlements; sourceTree = "<group>"; };
+		FCED852F2DD1B89500E299D1 /* ImageProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageProcessor.swift; sourceTree = "<group>"; };
 		FCF8E79F2DC9F8F60044291C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		FCF8E7A12DC9F8F80044291C /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -78,6 +80,7 @@
 				FC0976852DC72DF900C307FD /* UIComponents.swift */,
 				FCB9B0C72DBDFD4500110511 /* Me2ComicApp.swift */,
 				FCB9B0C92DBDFD4500110511 /* ImageProcessorView.swift */,
+				FCED852F2DD1B89500E299D1 /* ImageProcessor.swift */,
 				FCB9B0D02DBDFD4700110511 /* Me2Comic.entitlements */,
 			);
 			path = Me2Comic;
@@ -158,6 +161,7 @@
 			files = (
 				FCB9B0CA2DBDFD4500110511 /* ImageProcessorView.swift in Sources */,
 				FC0976862DC72DF900C307FD /* UIComponents.swift in Sources */,
+				FCED85302DD1B89500E299D1 /* ImageProcessor.swift in Sources */,
 				FCB9B0C82DBDFD4500110511 /* Me2ComicApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
