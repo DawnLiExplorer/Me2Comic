@@ -10,10 +10,10 @@
 
 /* Left panel build version */
 "BuildVersionLabel" = "Build %@";
-"BuildVersionDefault" = "慕夏";
+"BuildVersionDefault" = "穆夏";
 
-"Input Directory" = "輸入目錄: %1$@";
-"Output Directory" = "輸出目錄: %1$@";
+"Input Directory" = "輸入目錄: %@";
+"Output Directory" = "輸出目錄: %@";
 "Input Directory Placeholder" = "（待處理資料夾都放到同一層目錄下）";
 "Output Directory Placeholder" = "（會自動按原目錄名稱建立對應目錄）";
 

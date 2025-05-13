@@ -12,8 +12,8 @@
 "BuildVersionLabel" = "Build %@";
 "BuildVersionDefault" = "穆夏";
 
-"Input Directory" = "输入目录: %1$@";
-"Output Directory" = "输出目录: %1$@";
+"Input Directory" = "输入目录: %@";
+"Output Directory" = "输出目录: %@";
 "Input Directory Placeholder" = "（待处理文件夹都放到同一级目录下）";
 "Output Directory Placeholder" = "（会自动按原目录名称建立对应目录）";
 

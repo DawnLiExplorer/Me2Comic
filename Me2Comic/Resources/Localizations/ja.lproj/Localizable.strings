@@ -12,8 +12,8 @@
 "BuildVersionLabel" = "Build %@";
 "BuildVersionDefault" = "ミュシャ";
 
-"Input Directory" = "入力ディレクトリ: %1$@";
-"Output Directory" = "出力ディレクトリ: %1$@";
+"Input Directory" = "入力ディレクトリ: %@";
+"Output Directory" = "出力ディレクトリ: %@";
 "Input Directory Placeholder" = "（処理対象フォルダは同じ階層に配置されている必要があります）";
 "Output Directory Placeholder" = "（元のディレクトリ名に対応した出力先が自動で生成されます）";
 

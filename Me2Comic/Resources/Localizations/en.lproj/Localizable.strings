@@ -12,8 +12,8 @@
 "BuildVersionLabel" = "Build %@";
 "BuildVersionDefault" = "Mucha";
 
-"Input Directory" = "Input Directory: %1$@";
-"Output Directory" = "Output Directory: %1$@";
+"Input Directory" = "Input Directory: %@";
+"Output Directory" = "Output Directory: %@";
 "Input Directory Placeholder" = "(Folders to be processed should reside in the same parent directory)";
 "Output Directory Placeholder" = "(Corresponding directories will be created automatically based on the original directory names)";
 
