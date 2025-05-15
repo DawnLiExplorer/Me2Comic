@@ -275,33 +275,38 @@ class ImageProcessor: ObservableObject {
                 if !self.shouldCancelProcessing {
                     // Log failed files
                     if !failedFiles.isEmpty {
-                        DispatchQueue.main.async {
-                            self.logMessages.append(NSLocalizedString("FailedFilesList", comment: "") + "\n")
-                        }
+                        self.logMessages.append(NSLocalizedString("FailedFilesList", comment: "") + "\n")
                         failedFiles.forEach { self.logMessages.append("- \($0)\n") }
                     }
-                    // Log processing stats
+
+                    // Unified log output in correct order
                     DispatchQueue.main.async {
+                        // Log total number of processed images
                         self.logMessages.append(String(format: NSLocalizedString("TotalImagesProcessed", comment: ""), self.totalImagesProcessed) + "\n")
-                    }
-                    // Timer
-                    if let startTime = self.processingStartTime {
-                        let elapsedTime = Date().timeIntervalSince(startTime)
-                        if elapsedTime < 60 {
-                            self.logMessages.append(String(format: NSLocalizedString("ProcessingTimeSeconds", comment: ""), Int(elapsedTime)) + "\n")
-                        } else {
-                            self.logMessages.append(String(format: NSLocalizedString("ProcessingTimeMinutes", comment: ""), Int(elapsedTime / 60)) + "\n")
+
+                        // Log processing time
+                        if let startTime = self.processingStartTime {
+                            let elapsedTime = Date().timeIntervalSince(startTime)
+                            if elapsedTime < 60 {
+                                self.logMessages.append(String(format: NSLocalizedString("ProcessingTimeSeconds", comment: ""), Int(elapsedTime)) + "\n")
+                            } else {
+                                self.logMessages.append(String(format: NSLocalizedString("ProcessingTimeMinutes", comment: ""), Int(elapsedTime / 60)) + "\n")
+                            }
                         }
+
+                        // Log that processing is completed
+                        self.logMessages.append(NSLocalizedString("ProcessingCompleted", comment: "") + "\n")
+
+                        // Create notification for task completion
+                        let content = UNMutableNotificationContent()
+                        content.title = NSLocalizedString("TaskCompletedTitle", comment: "")
+                        content.body = NSLocalizedString("TaskCompletedBody", comment: "")
+                        content.sound = UNNotificationSound.default
+
+                        // Send notification request
+                        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
+                        UNUserNotificationCenter.current().add(request)
                     }
-                    self.logMessages.append(NSLocalizedString("ProcessingCompleted", comment: "") + "\n")
-                    // Create notification for task completion
-                    let content = UNMutableNotificationContent()
-                    content.title = NSLocalizedString("TaskCompletedTitle", comment: "")
-                    content.body = NSLocalizedString("TaskCompletedBody", comment: "")
-                    content.sound = UNNotificationSound.default
-                    // Send notification request
-                    let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
-                    UNUserNotificationCenter.current().add(request)
                 }
                 self.isProcessing = false
             }
