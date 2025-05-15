@@ -382,6 +382,10 @@ class ImageProcessor: ObservableObject {
                     try magickTask.run()
                     magickTask.waitUntilExit()
 
+                    DispatchQueue.main.async {
+                        self.activeTasks.removeAll { $0.process == magickTask }
+                    }
+
                     if magickTask.terminationStatus != 0 {
                         let errorData = errorPipe.fileHandleForReading.readDataToEndOfFile()
                         let errorMessage = String(data: errorData, encoding: .utf8) ?? NSLocalizedString("UnknownError", comment: "")
