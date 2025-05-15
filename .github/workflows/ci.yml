@@ -1,0 +1,16 @@
+name: build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macOS-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build
+        run: |
+          xcodebuild \
+            -project Me2Comic.xcodeproj \
+            -scheme Me2Comic \
+            clean build
