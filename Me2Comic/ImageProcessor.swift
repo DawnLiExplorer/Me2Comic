@@ -36,8 +36,14 @@ class ImageProcessor: ObservableObject {
     private var processingStartTime: Date?
 
     // Log messages and processing status
-    @Published var logMessages: [String] = []
     @Published var isProcessing: Bool = false
+    @Published var logMessages: [String] = [] {
+        didSet {
+            if logMessages.count > 100 {
+                logMessages.removeFirst(logMessages.count - 100)
+            }
+        }
+    }
 
     // Detect GraphicsMagick executable path
     private func detectGMPathViaWhich() -> String? {
