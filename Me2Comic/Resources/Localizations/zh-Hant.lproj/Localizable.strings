@@ -120,5 +120,7 @@
 "ProcessSingleImageFailed" = "錯誤：處理 %@ 失敗：%@";
 "ProcessImagePart1Failed" = "錯誤：處理 %@ 到 %@-1.jpg 失敗：%@";
 "CancelProcessImagePart2" = "取消處理圖片：%@ 的第二部分";
+"CancelProcessingImagePart" = "已取消處理圖片部分：%@";
+"ProcessImagePartFailed" = "錯誤：處理 %@ 到 %@ 失敗：%@";
 "ProcessImagePart2Failed" = "錯誤：處理 %@ 到 %@-2.jpg 失敗：%@";
 "ProcessImageFailed" = "錯誤：處理 %@ 失敗：%@";

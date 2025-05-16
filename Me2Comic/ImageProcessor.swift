@@ -31,13 +31,13 @@ class ImageProcessor: ObservableObject {
     private var gmPath: String = ""
     private var activeTasks: [ManagedTask] = []
     private let activeTasksQueue = DispatchQueue(label: "me2.comic.me2comic.activeTasks")
-    private var shouldCancelProcessing: Bool = false
-    private var totalImagesProcessed: Int = 0
+    private var shouldCancelProcessing: Bool = false // Cancellation flag
+    private var totalImagesProcessed: Int = 0 // Progress counter
     private var processingStartTime: Date?
 
     // Log messages and processing status
     @Published var isProcessing: Bool = false
-    @Published var logMessages: [String] = [] {
+    @Published var logMessages: [String] = [] { // limited to 100 entries
         didSet {
             if logMessages.count > 100 {
                 logMessages.removeFirst(logMessages.count - 100)
@@ -102,6 +102,68 @@ class ImageProcessor: ObservableObject {
         }
     }
 
+    // Processes a portion of an image (either whole or cropped)
+    private func processImagePart(inputURL: URL, outputPath: String, cropParameters: (width: Int, height: Int, x: Int, y: Int)?, resizeHeight: Int, quality: Int, unsharpRadius: Float, unsharpSigma: Float, unsharpAmount: Float, unsharpThreshold: Float, useGrayColorspace: Bool, failedFiles: inout [String]) {
+        guard !shouldCancelProcessing else {
+            DispatchQueue.main.async {
+                self.logMessages.append(String(format: NSLocalizedString("CancelProcessingImagePart", comment: ""), inputURL.lastPathComponent))
+            }
+            return
+        }
+
+        let outputFile = outputPath + ".jpg"
+        var arguments = ["convert", inputURL.path]
+        // Apply cropping if specified
+        if let crop = cropParameters {
+            arguments += ["-crop", "\(crop.width)x\(crop.height)+\(crop.x)+\(crop.y)"]
+        }
+        // Apply resizing and other transformations
+        arguments += ["-resize", "x\(resizeHeight)"]
+
+        if useGrayColorspace {
+            arguments += ["-colorspace", "GRAY"]
+        }
+
+        arguments += [
+            "-unsharp", "\(unsharpRadius)x\(unsharpSigma)+\(unsharpAmount)+\(unsharpThreshold)",
+            "-quality", "\(quality)",
+            outputFile
+        ]
+
+        let magickTask = Process()
+        magickTask.executableURL = URL(fileURLWithPath: gmPath)
+        magickTask.arguments = arguments
+        let errorPipe = Pipe()
+        magickTask.standardError = errorPipe
+        // Track active task
+        activeTasksQueue.async {
+            self.activeTasks.append(ManagedTask(process: magickTask))
+        }
+
+        do {
+            try magickTask.run()
+            magickTask.waitUntilExit()
+            // Clean up completed task
+            activeTasksQueue.async {
+                self.activeTasks.removeAll { $0.process == magickTask }
+            }
+
+            if magickTask.terminationStatus != 0 {
+                let errorData = errorPipe.fileHandleForReading.readDataToEndOfFile()
+                let errorMessage = String(data: errorData, encoding: .utf8) ?? NSLocalizedString("UnknownError", comment: "")
+                failedFiles.append(inputURL.lastPathComponent)
+                DispatchQueue.main.async {
+                    self.logMessages.append(String(format: NSLocalizedString("ProcessImagePartFailed", comment: ""), inputURL.lastPathComponent, outputFile, errorMessage))
+                }
+            }
+        } catch {
+            failedFiles.append(inputURL.lastPathComponent)
+            DispatchQueue.main.async {
+                self.logMessages.append(String(format: NSLocalizedString("ProcessImagePartFailed", comment: ""), inputURL.lastPathComponent, outputFile, error.localizedDescription))
+            }
+        }
+    }
+
     // Main processing function
     func processImages(inputDir: URL, outputDir: URL, parameters: ProcessingParameters) {
         guard let threshold = Int(parameters.widthThreshold), threshold > 0 else {
@@ -136,7 +198,7 @@ class ImageProcessor: ObservableObject {
         activeTasksQueue.async { // 清空 activeTasks
             self.activeTasks.removeAll()
         }
-        // Unsharp on off
+        // Log start with appropriate parameters
         if amount > 0 {
             logMessages.append(String(format: NSLocalizedString("StartProcessingWithUnsharp", comment: ""),
                                       threshold, resize, qual, parameters.threadCount, radius, sigma, amount, unsharpThreshold,
@@ -178,7 +240,7 @@ class ImageProcessor: ObservableObject {
             isProcessing = false
             return
         }
-
+        // Create output directory
         do {
             try FileManager.default.createDirectory(at: outputDir, withIntermediateDirectories: true, attributes: nil)
         } catch {
@@ -279,13 +341,13 @@ class ImageProcessor: ObservableObject {
                     self.logMessages.append(String(format: NSLocalizedString("CannotReadInputDir", comment: ""), error.localizedDescription))
                 }
             }
-
+            // Final completion handler
             group.notify(queue: .main) { [failedFiles] in
                 if !self.shouldCancelProcessing {
                     // Log failed files
                     if !failedFiles.isEmpty {
                         self.logMessages.append(NSLocalizedString("FailedFilesList", comment: ""))
-                        failedFiles.forEach { self.logMessages.append("- \($0)\n") }
+                        failedFiles.forEach { self.logMessages.append("- \($0)") }
                     }
 
                     // Unified log output in correct order
@@ -334,7 +396,7 @@ class ImageProcessor: ObservableObject {
         let filename = imageURL.lastPathComponent
         let filenameNoExt = imageURL.deletingPathExtension().lastPathComponent
         let outputPath = outputDir.appendingPathComponent(filenameNoExt).path
-
+        // Get image dimensions
         let task = Process()
         task.executableURL = URL(fileURLWithPath: gmPath)
         task.arguments = ["identify", "-format", "%w %h", imageURL.path]
@@ -367,104 +429,16 @@ class ImageProcessor: ObservableObject {
 
             let width = dimensions[0]
             let height = dimensions[1]
+            // Process whole image if below threshold width
             if width < widthThreshold {
-                let outputFile = "\(outputPath).jpg"
-                var arguments = [
-                    "convert",
-                    imageURL.path,
-                    "-resize", "x\(resizeHeight)"
-                ]
-                if useGrayColorspace {
-                    arguments += ["-colorspace", "GRAY"]
-                }
-                arguments += [
-                    "-unsharp", "\(unsharpRadius)x\(unsharpSigma)+\(unsharpAmount)+\(unsharpThreshold)",
-                    "-quality", "\(quality)",
-                    outputFile
-                ]
-
-                let magickTask = Process()
-                magickTask.executableURL = URL(fileURLWithPath: gmPath)
-                magickTask.arguments = arguments
-                let errorPipe = Pipe()
-                magickTask.standardError = errorPipe
-
-                activeTasksQueue.async { // 添加任务
-                    self.activeTasks.append(ManagedTask(process: magickTask))
-                }
-
-                do {
-                    try magickTask.run()
-                    magickTask.waitUntilExit()
-
-                    activeTasksQueue.async { // 移除任务
-                        self.activeTasks.removeAll { $0.process == magickTask }
-                    }
-
-                    if magickTask.terminationStatus != 0 {
-                        let errorData = errorPipe.fileHandleForReading.readDataToEndOfFile()
-                        let errorMessage = String(data: errorData, encoding: .utf8) ?? NSLocalizedString("UnknownError", comment: "")
-                        failedFiles.append(filename)
-                        DispatchQueue.main.async {
-                            self.logMessages.append(String(format: NSLocalizedString("ProcessSingleImageFailed", comment: ""), filename, errorMessage))
-                        }
-                    }
-                } catch {
-                    failedFiles.append(filename)
-                    DispatchQueue.main.async {
-                        self.logMessages.append(String(format: NSLocalizedString("ProcessSingleImageFailed", comment: ""), filename, error.localizedDescription))
-                    }
-                }
+                processImagePart(inputURL: imageURL, outputPath: outputPath, cropParameters: nil, resizeHeight: resizeHeight, quality: quality, unsharpRadius: unsharpRadius, unsharpSigma: unsharpSigma, unsharpAmount: unsharpAmount, unsharpThreshold: unsharpThreshold, useGrayColorspace: useGrayColorspace, failedFiles: &failedFiles)
             } else {
+                // Split wide image into two parts
                 let cropWidth = width / 2
-                let outputFile1 = "\(outputPath)-1.jpg"
-                var arguments1 = [
-                    "convert",
-                    imageURL.path,
-                    "-crop", "\(cropWidth)x\(height)+\(cropWidth)+0",
-                    "-resize", "x\(resizeHeight)"
-                ]
-                if useGrayColorspace {
-                    arguments1 += ["-colorspace", "GRAY"]
-                }
-                arguments1 += [
-                    "-unsharp", "\(unsharpRadius)x\(unsharpSigma)+\(unsharpAmount)+\(unsharpThreshold)",
-                    "-quality", "\(quality)",
-                    outputFile1
-                ]
 
-                let magickTask1 = Process()
-                magickTask1.executableURL = URL(fileURLWithPath: gmPath)
-                magickTask1.arguments = arguments1
-                let errorPipe1 = Pipe()
-                magickTask1.standardError = errorPipe1
-
-                activeTasksQueue.async { // 添加任务
-                    self.activeTasks.append(ManagedTask(process: magickTask1))
-                }
-
-                do {
-                    try magickTask1.run()
-                    magickTask1.waitUntilExit()
-
-                    activeTasksQueue.async { // 移除任务
-                        self.activeTasks.removeAll { $0.process == magickTask1 }
-                    }
-
-                    if magickTask1.terminationStatus != 0 {
-                        let errorData = errorPipe1.fileHandleForReading.readDataToEndOfFile()
-                        let errorMessage = String(data: errorData, encoding: .utf8) ?? NSLocalizedString("UnknownError", comment: "")
-                        DispatchQueue.main.async {
-                            self.logMessages.append(String(format: NSLocalizedString("ProcessImagePart1Failed", comment: ""), filename, filenameNoExt, errorMessage))
-                        }
-                        failedFiles.append(filename)
-                    }
-                } catch {
-                    failedFiles.append(filename)
-                    DispatchQueue.main.async {
-                        self.logMessages.append(String(format: NSLocalizedString("ProcessImagePart1Failed", comment: ""), filename, filenameNoExt, error.localizedDescription))
-                    }
-                }
+                // Process right half (-1.jpg)
+                let rightCrop = (width: cropWidth, height: height, x: cropWidth, y: 0)
+                processImagePart(inputURL: imageURL, outputPath: "\(outputPath)-1", cropParameters: rightCrop, resizeHeight: resizeHeight, quality: quality, unsharpRadius: unsharpRadius, unsharpSigma: unsharpSigma, unsharpAmount: unsharpAmount, unsharpThreshold: unsharpThreshold, useGrayColorspace: useGrayColorspace, failedFiles: &failedFiles)
 
                 guard !shouldCancelProcessing else {
                     DispatchQueue.main.async {
@@ -472,55 +446,9 @@ class ImageProcessor: ObservableObject {
                     }
                     return
                 }
-
-                let outputFile2 = "\(outputPath)-2.jpg"
-                var arguments2 = [
-                    "convert",
-                    imageURL.path,
-                    "-crop", "\(cropWidth)x\(height)+0+0",
-                    "-resize", "x\(resizeHeight)"
-                ]
-                if useGrayColorspace {
-                    arguments2 += ["-colorspace", "GRAY"]
-                }
-                arguments2 += [
-                    "-unsharp", "\(unsharpRadius)x\(unsharpSigma)+\(unsharpAmount)+\(unsharpThreshold)",
-                    "-quality", "\(quality)",
-                    outputFile2
-                ]
-
-                let magickTask2 = Process()
-                magickTask2.executableURL = URL(fileURLWithPath: gmPath)
-                magickTask2.arguments = arguments2
-                let errorPipe2 = Pipe()
-                magickTask2.standardError = errorPipe2
-
-                activeTasksQueue.async { // 添加任务
-                    self.activeTasks.append(ManagedTask(process: magickTask2))
-                }
-
-                do {
-                    try magickTask2.run()
-                    magickTask2.waitUntilExit()
-
-                    activeTasksQueue.async { // 移除任务
-                        self.activeTasks.removeAll { $0.process == magickTask2 }
-                    }
-
-                    if magickTask2.terminationStatus != 0 {
-                        let errorData = errorPipe2.fileHandleForReading.readDataToEndOfFile()
-                        let errorMessage = String(data: errorData, encoding: .utf8) ?? NSLocalizedString("UnknownError", comment: "")
-                        DispatchQueue.main.async {
-                            self.logMessages.append(String(format: NSLocalizedString("ProcessImagePart2Failed", comment: ""), filename, filenameNoExt, errorMessage))
-                        }
-                        failedFiles.append(filename)
-                    }
-                } catch {
-                    failedFiles.append(filename)
-                    DispatchQueue.main.async {
-                        self.logMessages.append(String(format: NSLocalizedString("ProcessImagePart2Failed", comment: ""), filename, filenameNoExt, error.localizedDescription))
-                    }
-                }
+                // Process left half (-2.jpg)
+                let leftCrop = (width: cropWidth, height: height, x: 0, y: 0)
+                processImagePart(inputURL: imageURL, outputPath: "\(outputPath)-2", cropParameters: leftCrop, resizeHeight: resizeHeight, quality: quality, unsharpRadius: unsharpRadius, unsharpSigma: unsharpSigma, unsharpAmount: unsharpAmount, unsharpThreshold: unsharpThreshold, useGrayColorspace: useGrayColorspace, failedFiles: &failedFiles)
             }
         } catch {
             DispatchQueue.main.async {

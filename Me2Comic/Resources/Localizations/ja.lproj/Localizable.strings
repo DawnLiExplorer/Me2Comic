@@ -120,5 +120,7 @@
 "ProcessSingleImageFailed" = "エラー：%@ の処理失敗: %@";
 "ProcessImagePart1Failed" = "エラー：%@ → %@-1.jpg 変換失敗: %@";
 "CancelProcessImagePart2" = "処理中断：%@ の第二分割処理をキャンセル";
+"CancelProcessingImagePart" = "画像部分の処理をキャンセルしました：%@";
+"ProcessImagePartFailed" = "エラー：%@ から %@ への処理失敗：%@";
 "ProcessImagePart2Failed" = "エラー：%@ → %@-2.jpg 変換失敗: %@";
 "ProcessImageFailed" = "エラー：%@ の処理失敗: %@";

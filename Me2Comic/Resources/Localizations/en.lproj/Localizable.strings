@@ -120,5 +120,7 @@
 "ProcessSingleImageFailed" = "Error: Processing %@ failed: %@";
 "ProcessImagePart1Failed" = "Error: Processing %@ to %@-1.jpg failed: %@";
 "CancelProcessImagePart2" = "Cancelled processing image: %@ part 2";
+"CancelProcessingImagePart" = "Cancelled processing image part: %@";
+"ProcessImagePartFailed" = "Error: Processing %@ to %@ failed: %@";
 "ProcessImagePart2Failed" = "Error: Processing %@ to %@-2.jpg failed: %@";
 "ProcessImageFailed" = "Error: Processing %@ failed: %@";
