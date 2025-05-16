@@ -5,6 +5,7 @@
 //  Created by Me2 on 2025/5/3.
 //
 
+import AppKit
 import SwiftUI
 
 // 输入输出目录
@@ -268,34 +269,21 @@ struct ActionButtonView: View {
     }
 }
 
-// 日志区
-struct LogView: View {
-    let logMessage: String
-    @State private var selectableText: String = ""
+// 日志使用 NSTextView 优化性能
+struct DecoratedView<Content: View>: View {
+    let content: Content
 
     var body: some View {
         ZStack {
-            // 水印层（置于底层）
             LogWatermarkView()
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
                 .padding(.trailing, 20)
                 .padding(.bottom, 10)
 
-            // 日志内容层（置于上层）
-            ScrollView {
-                Text(logMessage)
-                    .font(.system(size: 12, design: .monospaced))
-                    .foregroundColor(.textSecondary)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal, 10)
-                    .padding(.top, 10)
-                    .textSelection(.enabled) // 启用原生文本选择
-                    .id("log")
-                    .background(
-                        // 透明点击区域（解决窗口拖动冲突）
-                        Color.clear.contentShape(Rectangle())
-                    )
-            }
+            content
+                .padding(.horizontal, 4)
+                .padding(.top, 8)
+                .padding(.bottom, 8)
         }
         .background(.backgroundPrimary)
         .clipShape(RoundedRectangle(cornerRadius: 8))
@@ -304,13 +292,6 @@ struct LogView: View {
                 .stroke(.accent, lineWidth: 1)
         )
         .shadow(color: .accent.opacity(0.4), radius: 8, x: 0, y: 4)
-        .padding(.trailing, 1)
-        .onAppear {
-            selectableText = logMessage // 初始化可选中文本
-        }
-        .onChange(of: logMessage) { newValue in
-            selectableText = newValue // 动态更新可选中文本
-        }
     }
 }
 

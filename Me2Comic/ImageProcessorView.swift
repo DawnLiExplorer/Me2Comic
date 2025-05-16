@@ -5,6 +5,7 @@
 //  Created by Me2 on 2025/4/27.
 //
 
+import AppKit
 import SwiftUI
 import UserNotifications
 
@@ -92,15 +93,12 @@ struct ImageProcessorView: View {
                 .disabled(!processor.isProcessing && (inputDirectory == nil || outputDirectory == nil))
 
                 // Log console
-                ScrollViewReader { proxy in
-                    LogView(logMessage: processor.logMessages.joined())
-                        .onChange(of: processor.logMessages) { _ in
-                            withAnimation {
-                                proxy.scrollTo("log", anchor: .bottom)
-                            }
-                        }
+                ScrollViewReader { _ in
+                    DecoratedView(content: LogTextView(text: processor.logMessages.joined(separator: "\n")))
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .padding(.bottom, 15)
                 }
-                .padding(.bottom, 20)
+                .padding(.bottom, 5)
             }
             .padding(.horizontal)
         }
@@ -111,11 +109,11 @@ struct ImageProcessorView: View {
             center.requestAuthorization(options: [.alert, .sound]) { granted, error in
                 if let error = error {
                     DispatchQueue.main.async {
-                        processor.logMessages.append(String(format: NSLocalizedString("NotificationPermissionFailed", comment: ""), error.localizedDescription) + "\n")
+                        processor.logMessages.append(String(format: NSLocalizedString("NotificationPermissionFailed", comment: ""), error.localizedDescription))
                     }
                 } else if !granted {
                     DispatchQueue.main.async {
-                        processor.logMessages.append(NSLocalizedString("NotificationPermissionNotGranted", comment: "") + "\n")
+                        processor.logMessages.append(NSLocalizedString("NotificationPermissionNotGranted", comment: ""))
                     }
                 }
             }
@@ -131,7 +129,7 @@ struct ImageProcessorView: View {
 
         if panel.runModal() == .OK, let url = panel.url {
             inputDirectory = url
-            processor.logMessages.append(String(format: NSLocalizedString("SelectedInputDir", comment: ""), url.path) + "\n")
+            processor.logMessages.append(String(format: NSLocalizedString("SelectedInputDir", comment: ""), url.path))
         }
     }
 
@@ -143,13 +141,13 @@ struct ImageProcessorView: View {
 
         if panel.runModal() == .OK, let url = panel.url {
             outputDirectory = url
-            processor.logMessages.append(String(format: NSLocalizedString("SelectedOutputDir", comment: ""), url.path) + "\n")
+            processor.logMessages.append(String(format: NSLocalizedString("SelectedOutputDir", comment: ""), url.path))
         }
     }
 
     private func processImages() {
         guard let inputDir = inputDirectory, let outputDir = outputDirectory else {
-            processor.logMessages.append(NSLocalizedString("NoInputOrOutputDir", comment: "") + "\n")
+            processor.logMessages.append(NSLocalizedString("NoInputOrOutputDir", comment: ""))
             return
         }
 
@@ -165,6 +163,32 @@ struct ImageProcessorView: View {
             useGrayColorspace: useGrayColorspace
         )
         processor.processImages(inputDir: inputDir, outputDir: outputDir, parameters: parameters)
+    }
+}
+
+// NSViewRepresentable wrapper for NSTextView
+struct LogTextView: NSViewRepresentable {
+    var text: String
+
+    func makeNSView(context: Context) -> NSScrollView {
+        let scrollView = NSTextView.scrollableTextView()
+        let textView = scrollView.documentView as! NSTextView
+        textView.isEditable = false
+        textView.isSelectable = true
+        textView.backgroundColor = .clear
+        textView.textColor = NSColor(.textSecondary)
+        textView.font = NSFont.monospacedSystemFont(ofSize: 12, weight: .regular)
+        textView.textContainerInset = NSSize(width: 0, height: 0)
+        scrollView.borderType = .noBorder
+        return scrollView
+    }
+
+    func updateNSView(_ nsView: NSScrollView, context: Context) {
+        guard let textView = nsView.documentView as? NSTextView else { return }
+        if textView.string != text {
+            textView.string = text
+            textView.scrollToEndOfDocument(nil)
+        }
     }
 }
 
