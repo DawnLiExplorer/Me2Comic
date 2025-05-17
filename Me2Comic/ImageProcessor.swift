@@ -84,29 +84,51 @@ class ImageProcessor: ObservableObject {
 
     // Cancel all processing
     func stopProcessing() {
-        shouldCancelProcessing = true
+        // Set cancel flag safely using serial queue (barrier ensures exclusive write)
+        activeTasksQueue.async(flags: .barrier) {
+            self.shouldCancelProcessing = true
+        }
+
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             guard let self = self else { return }
-            let tasks = self.activeTasks
-            for task in tasks {
+
+            // Safely read a copy of activeTasks
+            var tasksCopy: [ManagedTask] = []
+            self.activeTasksQueue.sync {
+                tasksCopy = self.activeTasks
+            }
+
+            for task in tasksCopy {
                 if task.process.isRunning {
                     task.process.terminate()
                     task.process.waitUntilExit()
                 }
             }
+
             DispatchQueue.main.async {
-                self.activeTasks.removeAll()
                 self.logMessages.append(NSLocalizedString("ProcessingStopped", comment: ""))
                 self.isProcessing = false
+
+                // Safely clear activeTasks after stop
+                self.activeTasksQueue.async(flags: .barrier) {
+                    self.activeTasks.removeAll()
+                }
             }
         }
     }
 
     // Processes a portion of an image (either whole or cropped)
     private func processImagePart(inputURL: URL, outputPath: String, cropParameters: (width: Int, height: Int, x: Int, y: Int)?, resizeHeight: Int, quality: Int, unsharpRadius: Float, unsharpSigma: Float, unsharpAmount: Float, unsharpThreshold: Float, useGrayColorspace: Bool, failedFiles: inout [String]) {
-        guard !shouldCancelProcessing else {
+        // Safely read cancel flag
+        var cancel = false
+        activeTasksQueue.sync {
+            cancel = self.shouldCancelProcessing
+        }
+        guard !cancel else {
             DispatchQueue.main.async {
-                self.logMessages.append(String(format: NSLocalizedString("CancelProcessingImagePart", comment: ""), inputURL.lastPathComponent))
+                self.logMessages.append(String(
+                    format: NSLocalizedString("CancelProcessingImagePart", comment: ""),
+                    inputURL.lastPathComponent))
             }
             return
         }
@@ -196,13 +218,22 @@ class ImageProcessor: ObservableObject {
             return
         }
 
-        isProcessing = true // Enable processing flag
-        shouldCancelProcessing = false // clear cancel flag
-        totalImagesProcessed = 0 // reset counter
-        processingStartTime = Date() // record start time
-        activeTasksQueue.async { // clean activeTasks
+        isProcessing = true
+
+        // Reset cancel flag using barrier write to ensure thread safety
+        activeTasksQueue.async(flags: .barrier) {
+            self.shouldCancelProcessing = false
+        }
+
+        // Reset counters
+        totalImagesProcessed = 0
+        processingStartTime = Date()
+
+        // Clear activeTasks safely before starting
+        activeTasksQueue.async(flags: .barrier) {
             self.activeTasks.removeAll()
         }
+
         // Log start with appropriate parameters
         if amount > 0 {
             logMessages.append(String(format: NSLocalizedString("StartProcessingWithUnsharp", comment: ""),
@@ -220,7 +251,8 @@ class ImageProcessor: ObservableObject {
             isProcessing = false
             return
         }
-        gmPath = detectedPath // Store valid GM path
+        // Store valid GM path (avoids git merge's gm alias)
+        gmPath = detectedPath
 
         let task = Process()
         task.executableURL = URL(fileURLWithPath: gmPath)
