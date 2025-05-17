@@ -124,8 +124,13 @@ class ImageProcessor: ObservableObject {
             arguments += ["-colorspace", "GRAY"]
         }
 
+        // Only add -unsharp if unsharpAmount > 0
+        if unsharpAmount > 0 {
+            arguments += [
+                "-unsharp", "\(unsharpRadius)x\(unsharpSigma)+\(unsharpAmount)+\(unsharpThreshold)"
+            ]
+        }
         arguments += [
-            "-unsharp", "\(unsharpRadius)x\(unsharpSigma)+\(unsharpAmount)+\(unsharpThreshold)",
             "-quality", "\(quality)",
             outputFile
         ]
@@ -195,7 +200,7 @@ class ImageProcessor: ObservableObject {
         shouldCancelProcessing = false // clear cancel flag
         totalImagesProcessed = 0 // reset counter
         processingStartTime = Date() // record start time
-        activeTasksQueue.async { // 清空 activeTasks
+        activeTasksQueue.async { // clean activeTasks
             self.activeTasks.removeAll()
         }
         // Log start with appropriate parameters
@@ -205,7 +210,8 @@ class ImageProcessor: ObservableObject {
                                       NSLocalizedString(parameters.useGrayColorspace ? "GrayEnabled" : "GrayDisabled", comment: "")))
         } else {
             logMessages.append(String(format: NSLocalizedString("StartProcessingNoUnsharp", comment: ""),
-                                      threshold, resize, qual, parameters.threadCount))
+                                      threshold, resize, qual, parameters.threadCount,
+                                      NSLocalizedString(parameters.useGrayColorspace ? "GrayEnabled" : "GrayDisabled", comment: "")))
         }
 
         // Verify GM

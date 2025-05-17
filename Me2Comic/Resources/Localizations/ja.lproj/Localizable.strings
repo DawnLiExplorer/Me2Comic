@@ -71,7 +71,7 @@
 
 /* Log messages for starting image processing and GraphicsMagick check */
 "StartProcessingWithUnsharp" = "処理開始｜幅閾値:%d｜リサイズ高:%d｜品質:%d｜スレッド数:%d｜アンシャープ:%.1fx%.1f+%.1f+%.2f｜グレー:%@";
-"StartProcessingNoUnsharp" = "処理開始｜幅閾値:%d｜リサイズ高:%d｜品質:%d｜スレッド数:%d｜アンシャープ:無効";
+"StartProcessingNoUnsharp" = "処理開始｜幅閾値:%d｜リサイズ高:%d｜品質:%d｜スレッド数:%d｜アンシャープ:無効｜グレー:%@";
 "GraphicsMagickNotInstalled" = "エラー：GraphicsMagickが%@に未インストール";
 /* Gray colorspace states */
 "GrayEnabled" = "有効";

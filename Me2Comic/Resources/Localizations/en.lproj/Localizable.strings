@@ -71,7 +71,7 @@
 
 /* Log messages for starting image processing and GraphicsMagick check */
 "StartProcessingWithUnsharp" = "Starting image processing, Width threshold: %d, Resize height: %d, Output quality: %d, Threads: %d, Unsharp: %.1fx%.1f+%.1f+%.2f, Colorspace GRAY: %@";
-"StartProcessingNoUnsharp" = "Starting image processing, Width threshold: %d, Resize height: %d, Output quality: %d, Threads: %d, Unsharp: Disabled";
+"StartProcessingNoUnsharp" = "Starting image processing, Width threshold: %d, Resize height: %d, Output quality: %d, Threads: %d, Unsharp: Disabled, Colorspace GRAY: %@";
 "GraphicsMagickNotInstalled" = "Error: GraphicsMagick not installed at %@";
 /* Gray colorspace states */
 "GrayEnabled" = "Enabled";

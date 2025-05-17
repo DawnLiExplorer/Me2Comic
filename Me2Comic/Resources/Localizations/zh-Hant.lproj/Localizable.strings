@@ -71,7 +71,7 @@
 
 /* Log messages for starting image processing and GraphicsMagick check */
 "StartProcessingWithUnsharp" = "開始處理圖片，寬度閾值：%d，Resize 高度：%d，輸出品質：%d，執行緒數：%d，Unsharp：%.1fx%.1f+%.1f+%.2f，Colorspace GRAY：%@";
-"StartProcessingNoUnsharp" = "開始處理圖片，寬度閾值：%d，Resize 高度：%d，輸出品質：%d，執行緒數：%d，Unsharp：停用";
+"StartProcessingNoUnsharp" = "開始處理圖片，寬度閾值：%d，Resize 高度：%d，輸出品質：%d，執行緒數：%d，Unsharp：停用，Colorspace GRAY：%@";
 "GraphicsMagickNotInstalled" = "錯誤：GraphicsMagick 未安裝於 %@";
 /* Gray colorspace states */
 "GrayEnabled" = "啟用";
