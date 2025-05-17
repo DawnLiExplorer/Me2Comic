@@ -141,7 +141,7 @@ struct SettingsPanelView: View {
                 .stroke(.accent, lineWidth: 1)
         )
         .shadow(color: .accent.opacity(0.2), radius: 1, x: -2, y: 2)
-        .frame(width: 240) // 设置区固定宽度，避免随窗口扩展
+        .frame(width: 235) // 控制 SettingsPanelView 整体宽度，避免随窗口扩展
         .frame(maxHeight: .infinity)
     }
 }
@@ -153,11 +153,10 @@ struct ParameterInputView: View {
     var isProcessing: Bool
 
     var body: some View {
-        HStack {
+        HStack(spacing: 1) {
             Text(title)
                 .foregroundColor(.textPrimary)
                 .frame(width: 150, alignment: .leading)
-            Spacer().frame(width: 0)
             TextField("", text: $text) // 使用 $text 确保绑定
                 .textFieldStyle(.roundedBorder)
                 .frame(width: 60) // 参数输入框
@@ -210,17 +209,15 @@ struct ParameterDescription: View {
 // 说明文字视图
 struct ParameterDescriptionView: View {
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 6) {
-                    ForEach(parameterDescriptions, id: \.label) { param in
-                        ParameterDescription(label: param.label, description: param.description)
-                    }
+        ScrollView {
+            VStack(alignment: .leading, spacing: 6) {
+                ForEach(parameterDescriptions, id: \.label) { param in
+                    ParameterDescription(label: param.label, description: param.description)
                 }
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding() // 括号内 .leading, 12 说明文字与左侧边距
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding() // 说明文字与左侧边距
         .background(.backgroundPrimary)
         .clipShape(RoundedRectangle(cornerRadius: 8))
         .overlay(

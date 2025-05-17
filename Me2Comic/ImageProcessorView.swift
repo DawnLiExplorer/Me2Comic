@@ -60,7 +60,7 @@ struct ImageProcessorView: View {
                 .padding(.bottom, 10)
 
                 // Parameters panel
-                HStack(alignment: .top, spacing: 16) {
+                HStack(alignment: .top, spacing: 18) { // Increased spacing for right-side gap
                     SettingsPanelView(
                         widthThreshold: $widthThreshold,
                         resizeHeight: $resizeHeight,
@@ -77,8 +77,9 @@ struct ImageProcessorView: View {
                     // Parameters description
                     ParameterDescriptionView()
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .padding(.trailing, -3) // Added to increase gap from right edge
                 }
-                .padding(.horizontal, 1)
+                .padding(.horizontal, 4) // Increased padding for left-side gap
                 .fixedSize(horizontal: false, vertical: true)
                 .background(.panelBackground)
 
@@ -93,16 +94,16 @@ struct ImageProcessorView: View {
                 .disabled(!processor.isProcessing && (inputDirectory == nil || outputDirectory == nil))
 
                 // Log console
-                ScrollViewReader { _ in
-                    DecoratedView(content: LogTextView(text: processor.logMessages.joined(separator: "\n")))
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .padding(.bottom, 15)
-                }
-                .padding(.bottom, 5)
+                // Use DecoratedView directly to reduce nesting
+                DecoratedView(content: LogTextView(text: processor.logMessages.joined(separator: "\n")))
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .padding(.bottom, 15)
+                    .padding(.bottom, 5)
+                    .padding(.trailing, 1) // Added to increase gap from right edge
             }
-            .padding(.horizontal)
+            .padding(.horizontal, 15)
         }
-        .frame(minWidth: 996, minHeight: 735) // Sets min window size
+        .frame(minWidth: 994, minHeight: 735) // Sets min window size
         .background(.panelBackground)
         .onAppear {
             let center = UNUserNotificationCenter.current()
