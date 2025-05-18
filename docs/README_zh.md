@@ -1,11 +1,11 @@
 # Me2Comic
 
-[![CI Status](https://github.com/DawnLiExplorer/Me2Comic/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/DawnLiExplorer/Me2Comic/actions/workflows/ci.yml)
+[![build](https://github.com/DawnLiExplorer/Me2Comic/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/DawnLiExplorer/Me2Comic/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/License-MIT-blue)](https://opensource.org/licenses/MIT)
 
 [English](../README.md) | [中文](README_zh.md) | [日本語](README_ja.md)
 
-Me2Comic 是一款 macOS 下的 GUI 工具，通过调用 GraphicsMagick 实现图片的批量转换与裁切，在优先保证画质的前提下减小图片体积。作为一名漫画爱好者，我主要用它来处理漫画图片，同时借此学习 SwiftUI，积累更多经验。
+Me2Comic 是一款 macOS 图形界面工具，调用 GraphicsMagick 批量转换与裁剪图片，力求在减小文件体积的同时保留较高画质。最初是我用来处理漫画图片、学习 Swift 时的周末小项目，现在以 MIT 协议开源发布，欢迎试用、修改，或者随便看看～🍻
 
 <img src="screenshot.png" alt="Me2Comic Screenshot" width="500">
 
@@ -53,6 +53,11 @@ brew install graphicsmagick
 │   └── One Piece Vol.2...
 └── 漫画3
 </pre>
+
+## 构建与发布:
+
+集齐七颗龙珠 ➔ [Actions](../../../actions) ➔ `🐉 SHENRON! Grant my release wish! ✨` ➔ 喊出咒语 `Run workflow`  
+<sub>*（注：等待时间取决于神龙当天心情 🐉✨）*</sub>
 
 ### <sub>※ *附注* </sub> 
 <sub>※ *应用图标改编自穆夏《黄道十二宫》，版本代号致敬其艺术遗产，与官方项目无任何关联。* </sub>
