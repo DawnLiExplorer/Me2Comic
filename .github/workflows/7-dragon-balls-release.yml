@@ -1,0 +1,83 @@
+name: 🐉 SHENRON! Grant my release wish! ✨
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag version (e.g., v0.8.7)'
+        required: true
+      description:
+        description: 'Release notes (Markdown format)'
+        required: false
+  push:
+    tags: ['v*']
+
+jobs:
+  build-and-release:
+    runs-on: macOS-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Get version from tag
+        if: startsWith(github.ref, 'refs/tags/')
+        id: get_version
+        run: |
+          TAG_VERSION=${GITHUB_REF#refs/tags/}
+          echo "version=${TAG_VERSION}" >> $GITHUB_OUTPUT
+      
+      - name: Set version for manual dispatch
+        if: github.event_name == 'workflow_dispatch'
+        id: set_version
+        run: |
+          echo "version=${{ github.event.inputs.tag }}" >> $GITHUB_OUTPUT
+
+      - name: Get release notes
+        id: get_release_notes
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" && -n "${{ github.event.inputs.description }}" ]]; then
+            NOTES=$(echo "${{ github.event.inputs.description }}" | sed 's/• /- /g' | sed 's/^/    /')
+            delimiter=$(openssl rand -hex 6)
+            echo "notes<<${delimiter}" >> $GITHUB_OUTPUT
+            echo "${NOTES}" >> $GITHUB_OUTPUT
+            echo "${delimiter}" >> $GITHUB_OUTPUT
+          
+          elif [[ "${{ github.event_name }}" == "push" ]]; then
+            TAG_MESSAGE=$(git tag -l --format='%(contents)' ${{ steps.get_version.outputs.version }})
+            delimiter=$(openssl rand -hex 6)
+            echo "notes<<${delimiter}" >> $GITHUB_OUTPUT
+            echo "${TAG_MESSAGE}" >> $GITHUB_OUTPUT
+            echo "${delimiter}" >> $GITHUB_OUTPUT
+          
+          else
+            echo "notes=No release notes provided." >> $GITHUB_OUTPUT
+          fi
+
+      - name: Archive Application
+        run: |
+          xcodebuild archive \
+            -project Me2Comic.xcodeproj \
+            -scheme Me2Comic \
+            -destination "generic/platform=macOS" \
+            -archivePath build/Me2Comic.xcarchive \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO
+
+      - name: Create ZIP Package
+        run: |
+          APP_PATH="build/Me2Comic.xcarchive/Products/Applications/Me2Comic.app"
+          ZIP_NAME="Me2Comic-${{ steps.get_version.outputs.version || steps.set_version.outputs.version }}.zip"
+          ditto -c -k --keepParent "$APP_PATH" "$ZIP_NAME"
+          ls -lh "$ZIP_NAME"
+
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.get_version.outputs.version || steps.set_version.outputs.version }}
+          artifacts: "Me2Comic-${{ steps.get_version.outputs.version || steps.set_version.outputs.version }}.zip"
+          body: ${{ steps.get_release_notes.outputs.notes }}
+          draft: false
+          prerelease: false
+          makeLatest: true
+          token: ${{ secrets.GITHUB_TOKEN }}
