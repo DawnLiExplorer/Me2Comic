@@ -1,11 +1,11 @@
 # Me2Comic
 
-[![CI Status](https://github.com/DawnLiExplorer/Me2Comic/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/DawnLiExplorer/Me2Comic/actions/workflows/ci.yml)
+[![build](https://github.com/DawnLiExplorer/Me2Comic/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/DawnLiExplorer/Me2Comic/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/License-MIT-blue)](https://opensource.org/licenses/MIT)
 
 [English](README.md) | [中文](docs/README_zh.md) | [日本語](docs/README_ja.md)
 
-Me2Comic is a macOS GUI tool that calls GraphicsMagick externally to batch convert and crop images, prioritizing quality while reducing file size. As a comic enthusiast, I mainly use it for processing comic images and gaining more Swift experience.
+Me2Comic is a macOS GUI tool that calls GraphicsMagick to batch convert and crop images, prioritizing quality while reducing file size. It started as a weekend side project for processing comic images and experimenting with Swift. Now it's open-sourced under the MIT license—feel free to explore, tweak it, or just take a look. 🍻
 
 <img src="docs/screenshot.png" alt="Me2Comic Screenshot" width="500">
 
@@ -53,6 +53,10 @@ Volumes/Comics/Done/
 └── Comic 3
 </pre>
 
+## Build & Release:
+
+Gather the seven Dragon Balls ➔ [Actions](../../actions) ➔ `🐉 SHENRON! Grant my wish! ✨` ➔ Summon the Eternal Dragon `Run workflow`  
+<sub>*(Note: Wait time depends on Shenron's cosmic mood 🌌✨)*</sub>
 
 ### <sub>※ *Note* </sub> 
 <sub>※ *App icon adapted from Mucha's Zodiac, build names honor his legacy. No official affiliation.* </sub>
