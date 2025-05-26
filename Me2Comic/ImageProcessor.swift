@@ -45,6 +45,21 @@ class ImageProcessor: ObservableObject {
         }
     }
 
+    // Safely detect GraphicsMagick executable path with predefined paths
+    private func detectGMPathSafely() -> String? {
+        // First check known safe paths
+        let knownPaths = ["/opt/homebrew/bin/gm", "/usr/local/bin/gm", "/usr/bin/gm"]
+
+        for path in knownPaths {
+            if FileManager.default.fileExists(atPath: path) {
+                return path
+            }
+        }
+
+        // Fall back to which command if known paths don't exist
+        return detectGMPathViaWhich()
+    }
+
     // Detect GraphicsMagick executable path
     private func detectGMPathViaWhich() -> String? {
         let whichTask = Process()
@@ -245,12 +260,13 @@ class ImageProcessor: ObservableObject {
                                       NSLocalizedString(parameters.useGrayColorspace ? "GrayEnabled" : "GrayDisabled", comment: "")))
         }
 
-        // Verify GM
-        guard let detectedPath = detectGMPathViaWhich() else {
+        // Verify GM using safe path detection
+        guard let detectedPath = detectGMPathSafely() else {
             logMessages.append(NSLocalizedString("CannotRunGraphicsMagick", comment: ""))
             isProcessing = false
             return
         }
+
         // Store valid GM path (avoids git merge's gm alias)
         gmPath = detectedPath
 
