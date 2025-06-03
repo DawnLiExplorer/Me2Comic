@@ -72,7 +72,7 @@
 /* Log messages for starting image processing and GraphicsMagick check */
 "StartProcessingWithUnsharp" = "Starting image processing, Width threshold: %d, Resize height: %d, Output quality: %d, Threads: %d, Unsharp: %.1fx%.1f+%.1f+%.2f, Colorspace GRAY: %@";
 "StartProcessingNoUnsharp" = "Starting image processing, Width threshold: %d, Resize height: %d, Output quality: %d, Threads: %d, Unsharp: Disabled, Colorspace GRAY: %@";
-"GraphicsMagickNotInstalled" = "Error: GraphicsMagick not installed at %@";
+
 /* Gray colorspace states */
 "GrayEnabled" = "Enabled";
 "GrayDisabled" = "Disabled";
@@ -81,19 +81,12 @@
 "CannotReadOutput" = "Failed to read program output";
 "WhichGMException" = "Error: Failed to run 'which gm': %@";
 "WhichGMFailed" = "Error: 'which gm' failed or returned empty.";
-"GraphicsMagickRunFailed" = "Error: Failed to run GraphicsMagick: %@";
 "GraphicsMagickVersion" = "GraphicsMagick version: %@";
-"CannotRunGraphicsMagick" = "Error: Cannot run GraphicsMagick: %@";
 "CannotCreateOutputDir" = "Error: Cannot create output directory: %@";
+"GMNotFound" = "GraphicsMagick not found";
 
 /* Log messages for asynchronous image processing */
-"CancelProcessingImage" = "Cancelled processing image: %@";
-"ProcessingCancelledNoStart" = "Processing cancelled, no images processed";
-"ProcessingCancelledSubdir" = "Processing cancelled, stopped subdirectory processing";
 "StartProcessingSubdir" = "Starting processing subdirectory: %@";
-"ProcessingCancelledFiles" = "Processing cancelled, stopped file processing";
-"CompleteProcessingSubdir" = "Completed processing subdirectory: %@";
-"SubdirProcessingFailed" = "Error: Failed to process subdirectory %@: %@";
 "CannotReadInputDir" = "Error: Cannot read input directory: %@";
 
 /* Log messages for stopping processing */
@@ -106,21 +99,21 @@
 "UnknownError" = "Unknown error";
 
 /* Log messages for processing completion */
-"FailedFilesList" = "The following files failed to process:";
 "TotalImagesProcessed" = "Processed %d images";
 "ProcessingCompleted" = "Processing completed";
 /* Notification messages */
-"ProcessingTimeSeconds" = "Total processing time: %d seconds";
-"ProcessingTimeMinutes" = "Total processing time: %d minutes";
-"TaskCompletedTitle" = "Task Completed";
-"TaskCompletedBody" = "Image processing completed";
 
 /* Log messages for image dimension errors */
-"CannotGetImageDimensions" = "Error: Cannot get dimensions for %@";
-"ProcessSingleImageFailed" = "Error: Processing %@ failed: %@";
-"ProcessImagePart1Failed" = "Error: Processing %@ to %@-1.jpg failed: %@";
-"CancelProcessImagePart2" = "Cancelled processing image: %@ part 2";
-"CancelProcessingImagePart" = "Cancelled processing image part: %@";
-"ProcessImagePartFailed" = "Error: Processing %@ to %@ failed: %@";
-"ProcessImagePart2Failed" = "Error: Processing %@ to %@-2.jpg failed: %@";
-"ProcessImageFailed" = "Error: Processing %@ failed: %@";
+
+/* gm batch */
+"BatchProcessFailed" = "Batch processing failed: %@";
+"CannotCreateOutputSubdir" = "Cannot create output subdirectory: %@";
+"FailedFiles" = "Failed to process %d files";
+"NoImagesInDir" = "No images found in directory: %@";
+"ProcessedSubdir" = "Processed subdirectory: %@";
+"ProcessingCompletedSuccess" = "Processing completed successfully for %d images";
+"ProcessingCompletedTitle" = "Processing Completed";
+"ProcessingCompletedWithFailures" = "Processing completed with %d failures out of %d images";
+"ProcessingFailed" = "Processing failed: %@";
+"TotalProcessingTime" = "Total processing time: %d seconds";
+"UsingGM" = "Using GraphicsMagick at: %@";

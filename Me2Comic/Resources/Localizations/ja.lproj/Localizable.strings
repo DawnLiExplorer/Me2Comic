@@ -72,7 +72,7 @@
 /* Log messages for starting image processing and GraphicsMagick check */
 "StartProcessingWithUnsharp" = "処理開始｜幅閾値:%d｜リサイズ高:%d｜品質:%d｜スレッド数:%d｜アンシャープ:%.1fx%.1f+%.1f+%.2f｜グレー:%@";
 "StartProcessingNoUnsharp" = "処理開始｜幅閾値:%d｜リサイズ高:%d｜品質:%d｜スレッド数:%d｜アンシャープ:無効｜グレー:%@";
-"GraphicsMagickNotInstalled" = "エラー：GraphicsMagickが%@に未インストール";
+
 /* Gray colorspace states */
 "GrayEnabled" = "有効";
 "GrayDisabled" = "無効";
@@ -81,19 +81,12 @@
 "CannotReadOutput" = "プログラムの出力を読み取れません";
 "WhichGMException" = "エラー：'which gm' の実行に失敗しました：%@";
 "WhichGMFailed" = "エラー：'which gm' の実行が失敗したか、空の結果を返しました。";
-"GraphicsMagickRunFailed" = "エラー：GraphicsMagick実行失敗: %@";
 "GraphicsMagickVersion" = "GraphicsMagickバージョン: %@";
-"CannotRunGraphicsMagick" = "エラー：GraphicsMagick起動失敗: %@";
 "CannotCreateOutputDir" = "エラー：出力ディレクトリ作成失敗: %@";
+"GMNotFound" = "GraphicsMagickが見つかりません";
 
 /* Log messages for asynchronous image processing */
-"CancelProcessingImage" = "画像の処理をキャンセルしました：%@";
-"ProcessingCancelledNoStart" = "処理中止｜未処理状態";
-"ProcessingCancelledSubdir" = "処理中止｜サブディレクトリ処理中断";
 "StartProcessingSubdir" = "サブディレクトリ処理開始: %@";
-"ProcessingCancelledFiles" = "処理中止｜ファイル処理中断";
-"CompleteProcessingSubdir" = "サブディレクトリ処理完了: %@";
-"SubdirProcessingFailed" = "エラー：%@ の処理失敗: %@";
 "CannotReadInputDir" = "エラー：入力ディレクトリ読み込み不可: %@";
 
 /* Log messages for stopping processing */
@@ -106,21 +99,22 @@
 "UnknownError" = "不明なエラー";
 
 /* Log messages for processing completion */
-"FailedFilesList" = "処理失敗ファイル一覧：";
 "TotalImagesProcessed" = "総処理画像数: %d 枚";
 "ProcessingCompleted" = "処理完了";
 /* Notification messages */
-"ProcessingTimeSeconds" = "処理時間: %d秒";
-"ProcessingTimeMinutes" = "処理時間: %d分";
-"TaskCompletedTitle" = "タスク完了";
-"TaskCompletedBody" = "画像処理が完了しました";
 
 /* Log messages for image dimension errors */
-"CannotGetImageDimensions" = "エラー：%@ の画像サイズ取得失敗";
-"ProcessSingleImageFailed" = "エラー：%@ の処理失敗: %@";
-"ProcessImagePart1Failed" = "エラー：%@ → %@-1.jpg 変換失敗: %@";
-"CancelProcessImagePart2" = "処理中断：%@ の第二分割処理をキャンセル";
-"CancelProcessingImagePart" = "画像部分の処理をキャンセルしました：%@";
-"ProcessImagePartFailed" = "エラー：%@ から %@ への処理失敗：%@";
-"ProcessImagePart2Failed" = "エラー：%@ → %@-2.jpg 変換失敗: %@";
-"ProcessImageFailed" = "エラー：%@ の処理失敗: %@";
+
+/* gm batch */
+"BatchProcessFailed" = "バッチ処理に失敗しました: %@";
+"CannotCreateOutputSubdir" = "出力サブディレクトリを作成できません: %@";
+"FailedFiles" = "%dファイルの処理に失敗しました";
+"NoImagesInDir" = "ディレクトリに画像がありません: %@";
+"ProcessedSubdir" = "処理済みサブディレクトリ: %@";
+"ProcessingCompletedSuccess" = "%d枚の画像の処理が正常に完了しました";
+"ProcessingCompletedTitle" = "処理完了";
+"ProcessingCompletedWithFailures" = "処理が完了しました。%d枚中%d枚失敗";
+"ProcessingFailed" = "処理に失敗しました: %@";
+"TotalProcessingTime" = "総処理時間: %d秒";
+"UsingGM" = "GraphicsMagickを使用中: %@";
+

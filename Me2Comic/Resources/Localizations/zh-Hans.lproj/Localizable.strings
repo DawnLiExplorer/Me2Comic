@@ -72,7 +72,7 @@
 /* Log messages for starting image processing and GraphicsMagick check */
 "StartProcessingWithUnsharp" = "开始处理图片，宽度阈值：%d，Resize 高度：%d，输出质量：%d，线程数：%d，Unsharp：%.1fx%.1f+%.1f+%.2f，Colorspace GRAY：%@";
 "StartProcessingNoUnsharp" = "开始处理图片，宽度阈值：%d，Resize 高度：%d，输出质量：%d，线程数：%d，Unsharp：禁用，Colorspace GRAY：%@";
-"GraphicsMagickNotInstalled" = "错误：GraphicsMagick 未安装于 %@";
+
 /* Gray colorspace states */
 "GrayEnabled" = "启用";
 "GrayDisabled" = "关闭";
@@ -81,19 +81,12 @@
 "CannotReadOutput" = "无法读取程序输出";
 "WhichGMException" = "错误：执行 'which gm' 命令失败：%@";
 "WhichGMFailed" = "错误：'which gm' 命令失败或返回空。";
-"GraphicsMagickRunFailed" = "错误：运行 GraphicsMagick 失败：%@";
 "GraphicsMagickVersion" = "GraphicsMagick 版本：%@";
-"CannotRunGraphicsMagick" = "错误：无法运行 GraphicsMagick：%@";
 "CannotCreateOutputDir" = "错误：无法创建输出目录：%@";
+"GMNotFound" = "未找到GraphicsMagick";
 
 /* Log messages for asynchronous image processing */
-"CancelProcessingImage" = "取消处理图片：%@";
-"ProcessingCancelledNoStart" = "处理被取消，未开始任何图片处理";
-"ProcessingCancelledSubdir" = "处理被取消，停止子目录处理";
 "StartProcessingSubdir" = "开始处理子目录：%@";
-"ProcessingCancelledFiles" = "处理被取消，停止文件处理";
-"CompleteProcessingSubdir" = "完成处理子目录：%@";
-"SubdirProcessingFailed" = "错误：处理子目录 %@ 失败：%@";
 "CannotReadInputDir" = "错误：无法读取输入目录：%@";
 
 /* Log messages for stopping processing */
@@ -106,21 +99,21 @@
 "UnknownError" = "未知错误";
 
 /* Log messages for processing completion */
-"FailedFilesList" = "以下文件处理失败：";
 "TotalImagesProcessed" = "共处理 %d 张图片";
 "ProcessingCompleted" = "处理完成";
 /* Notification messages */
-"ProcessingTimeSeconds" = "总处理时间: %d秒";
-"ProcessingTimeMinutes" = "总处理时间: %d分钟";
-"TaskCompletedTitle" = "任务完成";
-"TaskCompletedBody" = "图片处理已完成";
 
 /* Log messages for image dimension errors */
-"CannotGetImageDimensions" = "错误：无法获取 %@ 尺寸";
-"ProcessSingleImageFailed" = "错误：处理 %@ 失败：%@";
-"ProcessImagePart1Failed" = "错误：处理 %@ 到 %@-1.jpg 失败：%@";
-"CancelProcessImagePart2" = "取消处理图片：%@ 的第二部分";
-"CancelProcessingImagePart" = "已取消处理图片部分：%@";
-"ProcessImagePartFailed" = "错误：处理 %@ 到 %@ 失败：%@";
-"ProcessImagePart2Failed" = "错误：处理 %@ 到 %@-2.jpg 失败：%@";
-"ProcessImageFailed" = "错误：处理 %@ 失败：%@";
+
+/* gm batch */
+"BatchProcessFailed" = "批量处理失败: %@";
+"CannotCreateOutputSubdir" = "无法创建输出子目录: %@";
+"FailedFiles" = "处理失败的文件数: %d";
+"NoImagesInDir" = "目录中没有图片: %@";
+"ProcessedSubdir" = "已处理子目录: %@";
+"ProcessingCompletedSuccess" = "成功处理%d张图像";
+"ProcessingCompletedTitle" = "处理完成";
+"ProcessingCompletedWithFailures" = "处理完成，%d张图像中%d张失败";
+"ProcessingFailed" = "处理失败: %@";
+"TotalProcessingTime" = "总处理时间: %d秒";
+"UsingGM" = "正在使用GraphicsMagick: %@";
