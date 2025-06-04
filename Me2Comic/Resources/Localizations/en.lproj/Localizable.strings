@@ -117,3 +117,8 @@
 "ProcessingFailed" = "Processing failed: %@";
 "TotalProcessingTime" = "Total processing time: %d seconds";
 "UsingGM" = "Using GraphicsMagick at: %@";
+"ProcessingTimeMinutesSeconds" = "Total processing time: %d minutes %d seconds";
+"NoSubdirectories" = "No subdirectories found in input directory";
+"NoImagesInDir" = "No images found in directory: %@";
+"CannotCreateOutputSubdir" = "Cannot create output subdirectory %@: %@";
+"ProcessedSubdir" = "Completed processing subdirectory: %@";

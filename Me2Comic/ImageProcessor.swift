@@ -34,6 +34,7 @@ class ImageProcessor: ObservableObject {
     private var shouldCancelProcessing: Bool = false // Cancellation flag
     private var totalImagesProcessed: Int = 0 // Progress counter
     private var processingStartTime: Date?
+    private let processedCountQueue = DispatchQueue(label: "me2.comic.me2comic.processedCount")
 
     // Log messages and processing status
     @Published var isProcessing: Bool = false
@@ -187,9 +188,9 @@ class ImageProcessor: ObservableObject {
         return command
     }
 
-    // Process images in batch for a subdirectory
+    // Process a batch of images
     private func processBatchImages(
-        subdirectory: URL,
+        images: [URL],
         outputDir: URL,
         widthThreshold: Int,
         resizeHeight: Int,
@@ -207,203 +208,238 @@ class ImageProcessor: ObservableObject {
             cancel = self.shouldCancelProcessing
         }
         if cancel { return 0 }
-
+        
         let fileManager = FileManager.default
-        let imageExtensions = ["jpg", "jpeg", "png"]
         var processedCount = 0
-
-        do {
-            // Get all files in subdirectory
-            let files = try fileManager.contentsOfDirectory(at: subdirectory, includingPropertiesForKeys: nil)
-            let imageFiles = files.filter { imageExtensions.contains($0.pathExtension.lowercased()) }
-
-            // If no image files, return immediately
-            if imageFiles.isEmpty {
-                DispatchQueue.main.async {
-                    self.logMessages.append(String(format: NSLocalizedString("NoImagesInDir", comment: ""), subdirectory.lastPathComponent))
-                }
-                return 0
+        
+        // If no image files, return immediately
+        if images.isEmpty { return 0 }
+        
+        // Create temporary batch file
+        let batchFilePath = FileManager.default.temporaryDirectory.appendingPathComponent("me2comic_batch_\(UUID().uuidString).txt")
+        var batchCommands = ""
+        
+        // Process each image file
+        for imageFile in images {
+            // Check cancellation flag again
+            activeTasksQueue.sync {
+                cancel = self.shouldCancelProcessing
             }
-
-            // Create temporary batch file
-            let batchFilePath = FileManager.default.temporaryDirectory.appendingPathComponent("me2comic_batch_\(UUID().uuidString).txt")
-            var batchCommands = ""
-
-            // Process each image file
-            for imageFile in imageFiles {
-                // Check cancellation flag again
-                activeTasksQueue.sync {
-                    cancel = self.shouldCancelProcessing
-                }
-                if cancel { break }
-
-                let filename = imageFile.lastPathComponent
-                let filenameWithoutExt = filename.split(separator: ".").dropLast().joined(separator: ".")
-                let outputBasePath = outputDir.appendingPathComponent(filenameWithoutExt).path
-
-                // Get image dimensions
-                do {
-                    let dimensionsTask = Process()
-                    dimensionsTask.executableURL = URL(fileURLWithPath: gmPath)
-                    dimensionsTask.arguments = ["identify", "-format", "%w %h", imageFile.path]
-
-                    let pipe = Pipe()
-                    dimensionsTask.standardOutput = pipe
-                    dimensionsTask.standardError = pipe
-
-                    try dimensionsTask.run()
-                    dimensionsTask.waitUntilExit()
-
-                    let data = pipe.fileHandleForReading.readDataToEndOfFile()
-                    guard dimensionsTask.terminationStatus == 0,
-                          let output = String(data: data, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines),
-                          !output.isEmpty
-                    else {
-                        failedFiles.append(filename)
-                        continue
-                    }
-
-                    let dimensions = output.split(separator: " ")
-                    guard dimensions.count == 2,
-                          let width = Int(dimensions[0]),
-                          let height = Int(dimensions[1])
-                    else {
-                        failedFiles.append(filename)
-                        continue
-                    }
-
-                    // Process based on width threshold
-                    if width < widthThreshold {
-                        // Process entire image
-                        let command = buildConvertCommand(
-                            inputPath: imageFile.path,
-                            outputPath: "\(outputBasePath).jpg",
-                            cropParams: nil,
-                            resizeHeight: resizeHeight,
-                            quality: quality,
-                            unsharpRadius: unsharpRadius,
-                            unsharpSigma: unsharpSigma,
-                            unsharpAmount: unsharpAmount,
-                            unsharpThreshold: unsharpThreshold,
-                            useGrayColorspace: useGrayColorspace
-                        )
-                        batchCommands.append(command + "\n")
-                        processedCount += 1
-                    } else {
-                        // Split into left and right parts
-                        let cropWidth = width / 2
-
-                        // Process right half (-1.jpg)
-                        let rightCropCommand = buildConvertCommand(
-                            inputPath: imageFile.path,
-                            outputPath: "\(outputBasePath)-1.jpg",
-                            cropParams: "\(cropWidth)x\(height)+\(cropWidth)+0",
-                            resizeHeight: resizeHeight,
-                            quality: quality,
-                            unsharpRadius: unsharpRadius,
-                            unsharpSigma: unsharpSigma,
-                            unsharpAmount: unsharpAmount,
-                            unsharpThreshold: unsharpThreshold,
-                            useGrayColorspace: useGrayColorspace
-                        )
-                        batchCommands.append(rightCropCommand + "\n")
-
-                        // Process left half (-2.jpg)
-                        let leftCropCommand = buildConvertCommand(
-                            inputPath: imageFile.path,
-                            outputPath: "\(outputBasePath)-2.jpg",
-                            cropParams: "\(cropWidth)x\(height)+0+0",
-                            resizeHeight: resizeHeight,
-                            quality: quality,
-                            unsharpRadius: unsharpRadius,
-                            unsharpSigma: unsharpSigma,
-                            unsharpAmount: unsharpAmount,
-                            unsharpThreshold: unsharpThreshold,
-                            useGrayColorspace: useGrayColorspace
-                        )
-                        batchCommands.append(leftCropCommand + "\n")
-                        processedCount += 1
-                    }
-                } catch {
-                    failedFiles.append(filename)
-                }
-            }
-
-            // If no commands or cancelled, clean up and return
-            if batchCommands.isEmpty || cancel {
-                try? fileManager.removeItem(at: batchFilePath)
-                return processedCount
-            }
-
-            // Write batch file
+            if cancel { break }
+            
+            let filename = imageFile.lastPathComponent
+            let filenameWithoutExt = imageFile.deletingPathExtension().lastPathComponent
+            let outputBasePath = outputDir.appendingPathComponent(filenameWithoutExt).path
+            
+            // Get image dimensions
             do {
-                try batchCommands.write(to: batchFilePath, atomically: true, encoding: .utf8)
-
-                // Execute batch command
-                let batchTask = Process()
-                batchTask.executableURL = URL(fileURLWithPath: gmPath)
-                batchTask.arguments = ["batch", "-stop-on-error", "off"]
-
-                let inputPipe = Pipe()
-                let outputPipe = Pipe()
-                let errorPipe = Pipe()
-                batchTask.standardInput = inputPipe
-                batchTask.standardOutput = outputPipe
-                batchTask.standardError = errorPipe
-
-                // Track active task
-                let managedTask = ManagedTask(process: batchTask)
-                activeTasksQueue.async {
-                    self.activeTasks.append(managedTask)
+                let dimensionsTask = Process()
+                dimensionsTask.executableURL = URL(fileURLWithPath: gmPath)
+                dimensionsTask.arguments = ["identify", "-format", "%w %h", imageFile.path]
+                
+                let pipe = Pipe()
+                dimensionsTask.standardOutput = pipe
+                dimensionsTask.standardError = pipe
+                
+                try dimensionsTask.run()
+                dimensionsTask.waitUntilExit()
+                
+                let data = pipe.fileHandleForReading.readDataToEndOfFile()
+                guard dimensionsTask.terminationStatus == 0,
+                      let output = String(data: data, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines),
+                      !output.isEmpty
+                else {
+                    failedFiles.append(filename)
+                    continue
                 }
-
-                // Read batch file content
-                let batchContent = try String(contentsOf: batchFilePath)
-                let data = batchContent.data(using: .utf8)!
-
-                try batchTask.run()
-
-                // Write batch commands to stdin
-                inputPipe.fileHandleForWriting.write(data)
-                inputPipe.fileHandleForWriting.closeFile()
-
-                batchTask.waitUntilExit()
-
-                // Clean up completed task
-                activeTasksQueue.async {
-                    self.activeTasks.removeAll { $0.id == managedTask.id }
+                
+                let dimensions = output.split(separator: " ")
+                guard dimensions.count == 2,
+                      let width = Int(dimensions[0]),
+                      let height = Int(dimensions[1])
+                else {
+                    failedFiles.append(filename)
+                    continue
                 }
-
-                // Delete temporary batch file
-                try? fileManager.removeItem(at: batchFilePath)
-
-                // Handle errors if any
-                if batchTask.terminationStatus != 0 {
-                    let errorData = errorPipe.fileHandleForReading.readDataToEndOfFile()
-                    if let errorMessage = String(data: errorData, encoding: .utf8), !errorMessage.isEmpty {
-                        DispatchQueue.main.async {
-                            self.logMessages.append(String(format: NSLocalizedString("BatchProcessFailed", comment: ""), errorMessage))
-                        }
-                    }
-
-                    // Add failed files to list
-                    failedFiles.append(contentsOf: imageFiles.map { $0.lastPathComponent })
-                    return 0
+                
+                // Process based on width threshold
+                if width < widthThreshold {
+                    // Process entire image
+                    let command = buildConvertCommand(
+                        inputPath: imageFile.path,
+                        outputPath: "\(outputBasePath).jpg",
+                        cropParams: nil,
+                        resizeHeight: resizeHeight,
+                        quality: quality,
+                        unsharpRadius: unsharpRadius,
+                        unsharpSigma: unsharpSigma,
+                        unsharpAmount: unsharpAmount,
+                        unsharpThreshold: unsharpThreshold,
+                        useGrayColorspace: useGrayColorspace
+                    )
+                    batchCommands.append(command + "\n")
+                    processedCount += 1
+                } else {
+                    // Split into left and right parts
+                    let cropWidth = width / 2
+                    
+                    // Process right half (-1.jpg)
+                    let rightCropCommand = buildConvertCommand(
+                        inputPath: imageFile.path,
+                        outputPath: "\(outputBasePath)-1.jpg",
+                        cropParams: "\(cropWidth)x\(height)+\(cropWidth)+0",
+                        resizeHeight: resizeHeight,
+                        quality: quality,
+                        unsharpRadius: unsharpRadius,
+                        unsharpSigma: unsharpSigma,
+                        unsharpAmount: unsharpAmount,
+                        unsharpThreshold: unsharpThreshold,
+                        useGrayColorspace: useGrayColorspace
+                    )
+                    batchCommands.append(rightCropCommand + "\n")
+                    
+                    // Process left half (-2.jpg)
+                    let leftCropCommand = buildConvertCommand(
+                        inputPath: imageFile.path,
+                        outputPath: "\(outputBasePath)-2.jpg",
+                        cropParams: "\(cropWidth)x\(height)+0+0",
+                        resizeHeight: resizeHeight,
+                        quality: quality,
+                        unsharpRadius: unsharpRadius,
+                        unsharpSigma: unsharpSigma,
+                        unsharpAmount: unsharpAmount,
+                        unsharpThreshold: unsharpThreshold,
+                        useGrayColorspace: useGrayColorspace
+                    )
+                    batchCommands.append(leftCropCommand + "\n")
+                    processedCount += 1
                 }
-
-                return processedCount
             } catch {
-                DispatchQueue.main.async {
-                    self.logMessages.append(String(format: NSLocalizedString("BatchProcessFailed", comment: ""), error.localizedDescription))
+                failedFiles.append(filename)
+            }
+        }
+        
+        // If no commands or cancelled, clean up and return
+        if batchCommands.isEmpty || cancel {
+            try? fileManager.removeItem(at: batchFilePath)
+            return processedCount
+        }
+        
+        // Write batch file
+        do {
+            try batchCommands.write(to: batchFilePath, atomically: true, encoding: .utf8)
+            
+            // Execute batch command
+            let batchTask = Process()
+            batchTask.executableURL = URL(fileURLWithPath: gmPath)
+            batchTask.arguments = ["batch", "-stop-on-error", "off"]
+            
+            let inputPipe = Pipe()
+            let outputPipe = Pipe()
+            let errorPipe = Pipe()
+            batchTask.standardInput = inputPipe
+            batchTask.standardOutput = outputPipe
+            batchTask.standardError = errorPipe
+            
+            // Track active task
+            let managedTask = ManagedTask(process: batchTask)
+            activeTasksQueue.async {
+                self.activeTasks.append(managedTask)
+            }
+            
+            // Read batch file content
+            let batchContent = try String(contentsOf: batchFilePath)
+            let data = batchContent.data(using: .utf8)!
+            
+            try batchTask.run()
+            
+            // Write batch commands to stdin
+            inputPipe.fileHandleForWriting.write(data)
+            inputPipe.fileHandleForWriting.closeFile()
+            
+            batchTask.waitUntilExit()
+            
+            // Clean up completed task
+            activeTasksQueue.async {
+                self.activeTasks.removeAll { $0.id == managedTask.id }
+            }
+            
+            // Delete temporary batch file
+            try? fileManager.removeItem(at: batchFilePath)
+            
+            // Handle errors if any
+            if batchTask.terminationStatus != 0 {
+                let errorData = errorPipe.fileHandleForReading.readDataToEndOfFile()
+                if let errorMessage = String(data: errorData, encoding: .utf8), !errorMessage.isEmpty {
+                    DispatchQueue.main.async {
+                        self.logMessages.append(String(format: NSLocalizedString("BatchProcessFailed", comment: ""), errorMessage))
+                    }
                 }
-                try? fileManager.removeItem(at: batchFilePath)
+                
+                // Add failed files to list
+                failedFiles.append(contentsOf: images.map { $0.lastPathComponent })
                 return 0
             }
+            
+            return processedCount
         } catch {
             DispatchQueue.main.async {
-                self.logMessages.append(String(format: NSLocalizedString("CannotReadInputDir", comment: ""), error.localizedDescription))
+                self.logMessages.append(String(format: NSLocalizedString("BatchProcessFailed", comment: ""), error.localizedDescription))
             }
+            try? fileManager.removeItem(at: batchFilePath)
             return 0
+        }
+    }
+
+    // Get all image files from a directory
+    private func getImageFiles(_ directory: URL) -> [URL] {
+        let fileManager = FileManager.default
+        let imageExtensions = ["jpg", "jpeg", "png"]
+        
+        do {
+            let files = try fileManager.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil)
+            return files.filter { imageExtensions.contains($0.pathExtension.lowercased()) }
+        } catch {
+            return []
+        }
+    }
+    
+    // Split images into batches
+    private func splitIntoBatches(_ images: [URL], batchSize: Int) -> [[URL]] {
+        var result: [[URL]] = []
+        var currentBatch: [URL] = []
+        
+        for image in images {
+            currentBatch.append(image)
+            
+            if currentBatch.count >= batchSize {
+                result.append(currentBatch)
+                currentBatch = []
+            }
+        }
+        
+        if !currentBatch.isEmpty {
+            result.append(currentBatch)
+        }
+        
+        return result
+    }
+    
+    // Thread-safe update of processed count
+    private func updateProcessedCount(_ count: Int) {
+        processedCountQueue.async {
+            self.totalImagesProcessed += count
+        }
+    }
+    
+    // Format processing time
+    private func formatProcessingTime(_ seconds: Int) -> String {
+        if seconds < 60 {
+            return String(format: NSLocalizedString("ProcessingTimeSeconds", comment: ""), seconds)
+        } else {
+            let minutes = seconds / 60
+            let remainingSeconds = seconds % 60
+            return String(format: NSLocalizedString("ProcessingTimeMinutesSeconds", comment: ""), minutes, remainingSeconds)
         }
     }
 
@@ -461,43 +497,46 @@ class ImageProcessor: ObservableObject {
                                       NSLocalizedString(parameters.useGrayColorspace ? "GrayEnabled" : "GrayDisabled", comment: "")))
         }
 
-        // Detect GraphicsMagick path
-        if gmPath.isEmpty {
-            guard let detectedPath = detectGMPathSafely() else {
-                logMessages.append(NSLocalizedString("GMNotFound", comment: ""))
-                isProcessing = false
-                return
-            }
-            gmPath = detectedPath
-            logMessages.append(String(format: NSLocalizedString("UsingGM", comment: ""), gmPath))
+        // Verify GM using safe path detection
+        guard let detectedPath = detectGMPathSafely() else {
+            logMessages.append(NSLocalizedString("CannotRunGraphicsMagick", comment: ""))
+            isProcessing = false
+            return
         }
 
-        // Get GraphicsMagick version
-        let versionTask = Process()
-        versionTask.executableURL = URL(fileURLWithPath: gmPath)
-        versionTask.arguments = ["--version"]
-        let versionPipe = Pipe()
-        versionTask.standardOutput = versionPipe
-        versionTask.standardError = versionPipe
+        // Store valid GM path (avoids git merge's gm alias)
+        gmPath = detectedPath
+
+        let task = Process()
+        task.executableURL = URL(fileURLWithPath: gmPath)
+        task.arguments = ["--version"]
+        let pipe = Pipe()
+        task.standardOutput = pipe
+        task.standardError = pipe
 
         do {
-            try versionTask.run()
-            versionTask.waitUntilExit()
-            let outputData = versionPipe.fileHandleForReading.readDataToEndOfFile()
+            try task.run()
+            task.waitUntilExit()
+            let outputData = pipe.fileHandleForReading.readDataToEndOfFile()
             let outputMessage = String(data: outputData, encoding: .utf8) ?? NSLocalizedString("CannotReadOutput", comment: "")
-            if versionTask.terminationStatus == 0 {
+            if task.terminationStatus != 0 {
+                logMessages.append(String(format: NSLocalizedString("GraphicsMagickRunFailed", comment: ""), outputMessage))
+                isProcessing = false
+                return
+            } else {
                 logMessages.append(String(format: NSLocalizedString("GraphicsMagickVersion", comment: ""), outputMessage))
             }
         } catch {
-            // Ignore version errors, continue with main processing
+            logMessages.append(String(format: NSLocalizedString("CannotRunGraphicsMagick", comment: ""), error.localizedDescription))
+            isProcessing = false
+            return
         }
-
-        // Create output directory if it doesn't exist
+        
         let fileManager = FileManager.default
+        
+        // Create output directory
         do {
-            if !fileManager.fileExists(atPath: outputDir.path) {
-                try fileManager.createDirectory(at: outputDir, withIntermediateDirectories: true)
-            }
+            try fileManager.createDirectory(at: outputDir, withIntermediateDirectories: true, attributes: nil)
         } catch {
             logMessages.append(String(format: NSLocalizedString("CannotCreateOutputDir", comment: ""), error.localizedDescription))
             isProcessing = false
@@ -507,9 +546,16 @@ class ImageProcessor: ObservableObject {
         // Process in background
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             guard let self = self else { return }
+            guard !self.shouldCancelProcessing else {
+                DispatchQueue.main.async {
+                    self.logMessages.append(NSLocalizedString("ProcessingCancelledNoStart", comment: ""))
+                    self.isProcessing = false
+                }
+                return
+            }
 
             var failedFiles: [String] = []
-            var totalProcessed = 0
+            let failedFilesQueue = DispatchQueue(label: "me2.comic.me2comic.failedFiles", attributes: [])
 
             do {
                 // Get subdirectories
@@ -520,8 +566,33 @@ class ImageProcessor: ObservableObject {
                         else { return false }
                         return isDirectory
                     }
-
-                // Process each subdirectory
+                
+                if subdirectories.isEmpty {
+                    DispatchQueue.main.async {
+                        self.logMessages.append(NSLocalizedString("NoSubdirectories", comment: ""))
+                        self.isProcessing = false
+                    }
+                    return
+                }
+                
+                // Create a dispatch group for all tasks
+                let processingGroup = DispatchGroup()
+                
+                // Create a semaphore to limit concurrent tasks
+                let semaphore = DispatchSemaphore(value: parameters.threadCount)
+                
+                // Create a concurrent queue for processing
+                let processingQueue = DispatchQueue(label: "me2.comic.me2comic.processing",
+                                                    qos: .userInitiated,
+                                                    attributes: .concurrent)
+                
+                // Collect all batches from all subdirectories
+                var allBatches: [(subdirName: String, outputDir: URL, images: [URL])] = []
+                
+                // Optimal batch size (adjust based on testing)
+                let batchSize = 10
+                
+                // Prepare all batches
                 for subdirectory in subdirectories {
                     // Check cancellation flag
                     var cancel = false
@@ -529,9 +600,9 @@ class ImageProcessor: ObservableObject {
                         cancel = self.shouldCancelProcessing
                     }
                     if cancel { break }
-
+                    
                     let subdirName = subdirectory.lastPathComponent
-
+                    
                     // Create corresponding output subdirectory
                     let outputSubdir = outputDir.appendingPathComponent(subdirName)
                     do {
@@ -544,60 +615,135 @@ class ImageProcessor: ObservableObject {
                         }
                         continue
                     }
-
+                    
+                    // Get all image files in this subdirectory
+                    let imageFiles = self.getImageFiles(subdirectory)
+                    
+                    if imageFiles.isEmpty {
+                        DispatchQueue.main.async {
+                            self.logMessages.append(String(format: NSLocalizedString("NoImagesInDir", comment: ""), subdirName))
+                        }
+                        continue
+                    }
+                    
                     // Log processing start for subdirectory
                     DispatchQueue.main.async {
                         self.logMessages.append(String(format: NSLocalizedString("StartProcessingSubdir", comment: ""), subdirName))
                     }
-
-                    // Process images in subdirectory
-                    let processed = self.processBatchImages(
-                        subdirectory: subdirectory,
-                        outputDir: outputSubdir,
-                        widthThreshold: threshold,
-                        resizeHeight: resize,
-                        quality: qual,
-                        unsharpRadius: radius,
-                        unsharpSigma: sigma,
-                        unsharpAmount: amount,
-                        unsharpThreshold: unsharpThreshold,
-                        useGrayColorspace: parameters.useGrayColorspace,
-                        failedFiles: &failedFiles
-                    )
-
-                    // Update total count
-                    totalProcessed += processed
-
-                    // Log processing completion for subdirectory
-                    DispatchQueue.main.async {
-                        self.logMessages.append(String(format: NSLocalizedString("ProcessedSubdir", comment: ""), subdirName))
+                    
+                    // Split images into batches
+                    let batches = self.splitIntoBatches(imageFiles, batchSize: batchSize)
+                    
+                    // Add all batches to the collection
+                    for batch in batches {
+                        allBatches.append((subdirName, outputSubdir, batch))
                     }
-
-                    // Check cancellation flag again
+                }
+                
+                // Process all batches in parallel
+                for batch in allBatches {
+                    // Check cancellation flag
+                    var cancel = false
                     self.activeTasksQueue.sync {
                         cancel = self.shouldCancelProcessing
                     }
                     if cancel { break }
-                }
-
-                // Calculate processing time
-                let processingTime = Date().timeIntervalSince(self.processingStartTime ?? Date())
-
-                // Log final statistics
-                DispatchQueue.main.async {
-                    self.logMessages.append(String(format: NSLocalizedString("TotalImagesProcessed", comment: ""), totalProcessed))
-
-                    if !failedFiles.isEmpty {
-                        self.logMessages.append(String(format: NSLocalizedString("FailedFiles", comment: ""), failedFiles.count))
+                    
+                    processingGroup.enter()
+                    semaphore.wait() // Limit concurrent tasks
+                    
+                    processingQueue.async {
+                        defer {
+                            semaphore.signal() // Release semaphore
+                            processingGroup.leave()
+                        }
+                        
+                        // Check cancellation flag again
+                        var cancel = false
+                        self.activeTasksQueue.sync {
+                            cancel = self.shouldCancelProcessing
+                        }
+                        if cancel { return }
+                        
+                        var localFailedFiles: [String] = []
+                        
+                        // Process this batch
+                        let processed = self.processBatchImages(
+                            images: batch.images,
+                            outputDir: batch.outputDir,
+                            widthThreshold: threshold,
+                            resizeHeight: resize,
+                            quality: qual,
+                            unsharpRadius: radius,
+                            unsharpSigma: sigma,
+                            unsharpAmount: amount,
+                            unsharpThreshold: unsharpThreshold,
+                            useGrayColorspace: parameters.useGrayColorspace,
+                            failedFiles: &localFailedFiles
+                        )
+                        
+                        // Update processed count
+                        if processed > 0 {
+                            self.updateProcessedCount(processed)
+                        }
+                        
+                        // Update failed files list
+                        if !localFailedFiles.isEmpty {
+                            failedFilesQueue.sync {
+                                failedFiles.append(contentsOf: localFailedFiles)
+                            }
+                        }
                     }
-
-                    self.logMessages.append(NSLocalizedString("ProcessingCompleted", comment: ""))
-                    self.logMessages.append(String(format: NSLocalizedString("TotalProcessingTime", comment: ""), Int(processingTime)))
-
-                    // Send notification
-                    self.sendCompletionNotification(totalProcessed: totalProcessed, failedCount: failedFiles.count)
-
-                    // Reset processing state
+                }
+                
+                // Wait for all processing to complete
+                processingGroup.wait()
+                
+                // Check if processing was cancelled
+                var wasCancelled = false
+                self.activeTasksQueue.sync {
+                    wasCancelled = self.shouldCancelProcessing
+                }
+                
+                // Get final processed count
+                var finalProcessedCount = 0
+                self.processedCountQueue.sync {
+                    finalProcessedCount = self.totalImagesProcessed
+                }
+                
+                // Calculate processing time
+                let processingTime = Int(Date().timeIntervalSince(self.processingStartTime ?? Date()))
+                let timeMessage = self.formatProcessingTime(processingTime)
+                
+                DispatchQueue.main.async {
+                    if wasCancelled {
+                        self.logMessages.append(NSLocalizedString("ProcessingStopped", comment: ""))
+                    } else {
+                        // Log subdirectory completion for all subdirectories
+                        for subdirectory in subdirectories {
+                            self.logMessages.append(String(format: NSLocalizedString("ProcessedSubdir", comment: ""), subdirectory.lastPathComponent))
+                        }
+                        
+                        // Report failed files if any
+                        if !failedFiles.isEmpty {
+                            self.logMessages.append(String(format: NSLocalizedString("FailedFiles", comment: ""), failedFiles.count))
+                            for file in failedFiles.prefix(10) { // Limit to first 10 files
+                                self.logMessages.append("- \(file)")
+                            }
+                            if failedFiles.count > 10 {
+                                self.logMessages.append(String(format: "... %d more", failedFiles.count - 10))
+                            }
+                        }
+                        
+                        // Report total processed
+                        self.logMessages.append(String(format: NSLocalizedString("TotalImagesProcessed", comment: ""), finalProcessedCount))
+                        self.logMessages.append(NSLocalizedString("ProcessingCompleted", comment: ""))
+                        self.logMessages.append(timeMessage)
+                        
+                        // Send notification
+                        self.sendCompletionNotification(totalProcessed: finalProcessedCount, failedCount: failedFiles.count)
+                    }
+                    
                     self.isProcessing = false
                 }
             } catch {
