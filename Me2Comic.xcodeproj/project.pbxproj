@@ -76,14 +76,30 @@
 		FCB9B0C62DBDFD4500110511 /* Me2Comic */ = {
 			isa = PBXGroup;
 			children = (
+				FCF6FDC42DF08BBA00572AC1 /* Views */,
+				FCF6FDC32DF08BA500572AC1 /* Core */,
 				FC39697C2DCE28FA006BB484 /* Resources */,
-				FC0976852DC72DF900C307FD /* UIComponents.swift */,
 				FCB9B0C72DBDFD4500110511 /* Me2ComicApp.swift */,
-				FCB9B0C92DBDFD4500110511 /* ImageProcessorView.swift */,
-				FCED852F2DD1B89500E299D1 /* ImageProcessor.swift */,
 				FCB9B0D02DBDFD4700110511 /* Me2Comic.entitlements */,
 			);
 			path = Me2Comic;
+			sourceTree = "<group>";
+		};
+		FCF6FDC32DF08BA500572AC1 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				FCED852F2DD1B89500E299D1 /* ImageProcessor.swift */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		FCF6FDC42DF08BBA00572AC1 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				FC0976852DC72DF900C307FD /* UIComponents.swift */,
+				FCB9B0C92DBDFD4500110511 /* ImageProcessorView.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
