@@ -12,8 +12,8 @@
 "BuildVersionLabel" = "Build %@";
 "BuildVersionDefault" = "穆夏";
 
-"Input Directory" = "输入目录: %@";
-"Output Directory" = "输出目录: %@";
+"Input Directory" = "输入目录：%@";
+"Output Directory" = "输出目录：%@";
 "Input Directory Placeholder" = "（待处理文件夹都放到同一级目录下）";
 "Output Directory Placeholder" = "（会自动按原目录名称建立对应目录）";
 
@@ -54,8 +54,8 @@
 "GrayDesc" = "on=转换至灰度空间（8-bit），off=保留原始色彩空间";
 
 /* Log messages for directory selection */
-"SelectedInputDir" = "已选择输入目录: %@";
-"SelectedOutputDir" = "已选择输出目录: %@";
+"SelectedInputDir" = "已选择输入目录：%@";
+"SelectedOutputDir" = "已选择输出目录：%@";
 "Open" = "打开";
 
 /* Log messages for processImages */
@@ -88,6 +88,7 @@
 /* Log messages for asynchronous image processing */
 "StartProcessingSubdir" = "开始处理子目录：%@";
 "CannotReadInputDir" = "错误：无法读取输入目录：%@";
+"ProcessedSubdir" = "完成处理子目录：%@";
 
 /* Log messages for stopping processing */
 "StopProcessingSuccess" = "成功停止所有处理操作";
@@ -101,24 +102,31 @@
 /* Log messages for processing completion */
 "TotalImagesProcessed" = "共处理 %d 张图片";
 "ProcessingCompleted" = "处理完成";
-/* Notification messages */
-
-/* Log messages for image dimension errors */
-
-/* gm batch */
-"BatchProcessFailed" = "批量处理失败: %@";
-"CannotCreateOutputSubdir" = "无法创建输出子目录: %@";
-"FailedFiles" = "处理失败的文件数: %d";
-"NoImagesInDir" = "目录中没有图片: %@";
-"ProcessedSubdir" = "已处理子目录: %@";
 "ProcessingCompletedSuccess" = "成功处理%d张图像";
 "ProcessingCompletedTitle" = "处理完成";
+
+/* Notification messages */
+"ProcessingTimeMinutesSeconds" = "总处理时间：%d分钟%d秒";
+"ProcessingTimeSeconds" = "总处理时间：%d秒";
+
+/* Log messages for image dimension errors */
+"BatchProcessFailed" = "批量处理失败：%@";
+"CannotCreateOutputSubdir" = "无法创建输出子目录：%@";
+"FailedFiles" = "处理失败的文件数：%d";
 "ProcessingCompletedWithFailures" = "处理完成，%d张图像中%d张失败";
-"ProcessingFailed" = "处理失败: %@";
-"TotalProcessingTime" = "总处理时间: %d秒";
-"UsingGM" = "正在使用GraphicsMagick: %@";
-"ProcessingTimeMinutesSeconds" = "总处理时间: %d分钟%d秒";
+"ProcessingFailed" = "处理失败：%@";
+"UsingGM" = "正在使用GraphicsMagick：%@";
 "NoSubdirectories" = "输入目录中未找到子目录";
-"NoImagesInDir" = "目录中未找到图片: %@";
-"CannotCreateOutputSubdir" = "无法创建输出子目录 %@: %@";
-"ProcessedSubdir" = "完成处理子目录: %@";
+"NoImagesInDir" = "目录中未找到图片：%@";
+
+/* Batch Size parameter label */
+"BatchSize" = "队列大小：";
+
+/* Batch Size parameter label in description area */
+"BatchSizeLabel" = "队列大小：";
+
+/* Batch Size description */
+"BatchSizeDesc" = "适当的队列能提高效率，降低系统开销";
+
+/* Invalid Batch Size error message */
+"InvalidBatchSize" = "队列大小无效。必须是1-1000之间的整数。使用默认值(20)。";

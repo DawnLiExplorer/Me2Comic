@@ -54,8 +54,8 @@
 "GrayDesc" = "on=轉換至灰階空間（8-bit），off=保留原始色彩空間";
 
 /* Log messages for directory selection */
-"SelectedInputDir" = "已選擇輸入目錄: %@";
-"SelectedOutputDir" = "已選擇輸出目錄: %@";
+"SelectedInputDir" = "已選擇輸入目錄：%@";
+"SelectedOutputDir" = "已選擇輸出目錄：%@";
 "Open" = "開啟";
 
 /* Log messages for processImages */
@@ -88,6 +88,7 @@
 /* Log messages for asynchronous image processing */
 "StartProcessingSubdir" = "開始處理子目錄：%@";
 "CannotReadInputDir" = "錯誤：無法讀取輸入目錄：%@";
+"ProcessedSubdir" = "完成處理子目錄：%@";
 
 /* Log messages for stopping processing */
 "StopProcessingSuccess" = "成功停止所有處理操作";
@@ -101,24 +102,31 @@
 /* Log messages for processing completion */
 "TotalImagesProcessed" = "共處理 %d 張圖片";
 "ProcessingCompleted" = "處理完成";
-/* Notification messages */
-
-/* Log messages for image dimension errors */
-
-/* gm batch */
-"BatchProcessFailed" = "批次處理失敗: %@";
-"CannotCreateOutputSubdir" = "無法創建輸出子目錄: %@";
-"FailedFiles" = "處理失敗的檔案數: %d";
-"NoImagesInDir" = "目錄中沒有圖像: %@";
-"ProcessedSubdir" = "已處理子目錄: %@";
 "ProcessingCompletedSuccess" = "成功處理%d張圖像";
 "ProcessingCompletedTitle" = "處理完成";
+
+/* Notification messages */
+"ProcessingTimeMinutesSeconds" = "總處理時間：%d分鐘%d秒";
+"ProcessingTimeSeconds" = "總處理時間：%d秒";
+
+/* Log messages for image dimension errors */
+"BatchProcessFailed" = "批次處理失敗：%@";
+"CannotCreateOutputSubdir" = "無法創建輸出子目錄：%@";
+"FailedFiles" = "處理失敗的檔案數：%d";
 "ProcessingCompletedWithFailures" = "處理完成，%d張圖像中%d張失敗";
-"ProcessingFailed" = "處理失敗: %@";
-"TotalProcessingTime" = "總處理時間: %d秒";
-"UsingGM" = "正在使用GraphicsMagick: %@";
-"ProcessingTimeMinutesSeconds" = "總處理時間: %d分鐘%d秒";
+"ProcessingFailed" = "處理失敗：%@";
+"UsingGM" = "正在使用GraphicsMagick：%@";
 "NoSubdirectories" = "輸入目錄中未找到子目錄";
-"NoImagesInDir" = "目錄中未找到圖片: %@";
-"CannotCreateOutputSubdir" = "無法創建輸出子目錄 %@: %@";
-"ProcessedSubdir" = "完成處理子目錄: %@";
+"NoImagesInDir" = "目錄中未找到圖片：%@";
+
+/* Batch Size parameter label */
+"BatchSize" = "隊列大小：";
+
+/* Batch Size parameter label in description area */
+"BatchSizeLabel" = "隊列大小：";
+
+/* Batch Size description */
+"BatchSizeDesc" = "適當的隊列能提高效率，降低系統開銷";
+
+/* Invalid Batch Size error message */
+"InvalidBatchSize" = "隊列大小無效。必須是1-1000之間的整數。使用默認值(20)。";

@@ -21,6 +21,7 @@ struct ImageProcessorView: View {
     @State private var unsharpSigma: String = "1"
     @State private var unsharpAmount: String = "0.7"
     @State private var unsharpThreshold: String = "0.02"
+    @State private var batchSize: String = "20"
 
     @ObservedObject private var processor = ImageProcessor()
 
@@ -70,6 +71,7 @@ struct ImageProcessorView: View {
                         unsharpSigma: $unsharpSigma,
                         unsharpAmount: $unsharpAmount,
                         unsharpThreshold: $unsharpThreshold,
+                        batchSize: $batchSize,
                         useGrayColorspace: $useGrayColorspace,
                         isProcessing: processor.isProcessing
                     )
@@ -161,6 +163,7 @@ struct ImageProcessorView: View {
             unsharpSigma: unsharpSigma,
             unsharpAmount: unsharpAmount,
             unsharpThreshold: unsharpThreshold,
+            batchSize: batchSize,
             useGrayColorspace: useGrayColorspace
         )
         processor.processImages(inputDir: inputDir, outputDir: outputDir, parameters: parameters)

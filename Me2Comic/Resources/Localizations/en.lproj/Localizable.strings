@@ -88,6 +88,7 @@
 /* Log messages for asynchronous image processing */
 "StartProcessingSubdir" = "Starting processing subdirectory: %@";
 "CannotReadInputDir" = "Error: Cannot read input directory: %@";
+"ProcessedSubdir" = "Completed processing subdirectory: %@";
 
 /* Log messages for stopping processing */
 "StopProcessingSuccess" = "Successfully stopped all processing operations";
@@ -101,24 +102,32 @@
 /* Log messages for processing completion */
 "TotalImagesProcessed" = "Processed %d images";
 "ProcessingCompleted" = "Processing completed";
+"ProcessingCompletedSuccess" = "Processing completed successfully for %d images";
+"ProcessingCompletedTitle" = "Processing Completed";
+
 /* Notification messages */
+"ProcessingTimeMinutesSeconds" = "Total processing time: %d minutes %d seconds";
+"ProcessingTimeSeconds" = "Total processing time: %d seconds";
 
 /* Log messages for image dimension errors */
-
-/* gm batch */
 "BatchProcessFailed" = "Batch processing failed: %@";
 "CannotCreateOutputSubdir" = "Cannot create output subdirectory: %@";
 "FailedFiles" = "Failed to process %d files";
-"NoImagesInDir" = "No images found in directory: %@";
-"ProcessedSubdir" = "Processed subdirectory: %@";
-"ProcessingCompletedSuccess" = "Processing completed successfully for %d images";
-"ProcessingCompletedTitle" = "Processing Completed";
 "ProcessingCompletedWithFailures" = "Processing completed with %d failures out of %d images";
 "ProcessingFailed" = "Processing failed: %@";
-"TotalProcessingTime" = "Total processing time: %d seconds";
 "UsingGM" = "Using GraphicsMagick at: %@";
-"ProcessingTimeMinutesSeconds" = "Total processing time: %d minutes %d seconds";
 "NoSubdirectories" = "No subdirectories found in input directory";
 "NoImagesInDir" = "No images found in directory: %@";
-"CannotCreateOutputSubdir" = "Cannot create output subdirectory %@: %@";
-"ProcessedSubdir" = "Completed processing subdirectory: %@";
+
+/* Batch Size parameter label */
+"BatchSize" = "Batch Size:";
+
+/* Batch Size parameter label in description area */
+"BatchSizeLabel" = "Batch Size:";
+
+/* Batch Size description */
+"BatchSizeDesc" = "Appropriate queue size improves efficiency and reduces system overhead";
+
+/* Invalid Batch Size error message */
+"InvalidBatchSize" = "Invalid batch size. Must be an integer between 1-1000. Using default value (20).";
+
