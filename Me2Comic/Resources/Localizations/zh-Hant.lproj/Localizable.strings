@@ -117,3 +117,8 @@
 "ProcessingFailed" = "處理失敗: %@";
 "TotalProcessingTime" = "總處理時間: %d秒";
 "UsingGM" = "正在使用GraphicsMagick: %@";
+"ProcessingTimeMinutesSeconds" = "總處理時間: %d分鐘%d秒";
+"NoSubdirectories" = "輸入目錄中未找到子目錄";
+"NoImagesInDir" = "目錄中未找到圖片: %@";
+"CannotCreateOutputSubdir" = "無法創建輸出子目錄 %@: %@";
+"ProcessedSubdir" = "完成處理子目錄: %@";
