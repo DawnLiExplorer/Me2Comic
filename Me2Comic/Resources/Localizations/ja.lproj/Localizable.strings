@@ -78,22 +78,20 @@
 "GrayDisabled" = "無効";
 
 /* Log messages for GraphicsMagick and output directory errors */
-"CannotReadOutput" = "プログラムの出力を読み取れません";
+"CannotReadOutput" = "コマンドの出力結果を解析できませんでした";
 "WhichGMException" = "エラー:'which gm' の実行に失敗しました：%@";
 "WhichGMFailed" = "エラー:'which gm' の実行が失敗したか、空の結果を返しました。";
 "GraphicsMagickVersion" = "GraphicsMagickバージョン:%@";
 "CannotCreateOutputDir" = "エラー:出力ディレクトリ作成失敗：%@";
-"GMNotFound" = "GraphicsMagickが見つかりません";
+"CannotRunGraphicsMagick" = "GraphicsMagick の起動に失敗しました：%@";
+"GraphicsMagickRunFailed" = "GraphicsMagick の実行に失敗しました：%@";
+"ProcessingCancelledNoStart" = "処理が開始される前にキャンセルされました";
 
 /* Log messages for asynchronous image processing */
 "StartProcessingSubdir" = "サブディレクトリ処理開始:%@";
-"CannotReadInputDir" = "エラー:入力ディレクトリ読み込み不可：%@";
 "ProcessedSubdir" = "サブディレクトリの処理が完了しました:%@";
 
 /* Log messages for stopping processing */
-"StopProcessingSuccess" = "全処理を正常停止";
-"StopProcessingFailed" = "警告:プロセス停止失敗：%@";
-"CannotExecuteStopCommand" = "エラー:停止コマンド実行不可：%@";
 "ProcessingStopped" = "処理停止完了";
 
 /* Unknown error */
@@ -115,7 +113,6 @@
 "FailedFiles" = "%dファイルの処理に失敗しました";
 "ProcessingCompletedWithFailures" = "処理が完了しました。%d枚中%d枚失敗";
 "ProcessingFailed" = "処理に失敗しました:%@";
-"UsingGM" = "GraphicsMagickを使用中:%@";
 "NoSubdirectories" = "入力ディレクトリにサブディレクトリが見つかりません";
 "NoImagesInDir" = "ディレクトリに画像が見つかりません:%@";
 
