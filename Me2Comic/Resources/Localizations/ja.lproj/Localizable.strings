@@ -6,40 +6,40 @@
   
 */
 
-"Select Language" = "言語選択：";
+"Select Language" = "言語選択:";
 
 /* Left panel build version */
 "BuildVersionLabel" = "Build %@";
 "BuildVersionDefault" = "ミュシャ";
 
-"Input Directory" = "入力ディレクトリ: %@";
-"Output Directory" = "出力ディレクトリ: %@";
+"Input Directory" = "入力ディレクトリ:%@";
+"Output Directory" = "出力ディレクトリ:%@";
 "Input Directory Placeholder" = "（処理対象フォルダは同じ階層に配置されている必要があります）";
 "Output Directory Placeholder" = "（元のディレクトリ名に対応した出力先が自動で生成されます）";
 
 /* Parameter input titles */
-"WidthUnder" = "幅閾値（px）：";
-"ResizeHeight" = "リサイズ高（px）：";
-"OutputQuality" = "出力品質（％）：";
-"UnsharpRadius" = "アンシャープ半径：";
-"UnsharpSigma" = "アンシャープσ：";
-"UnsharpAmount" = "アンシャープ強度：";
-"UnsharpThreshold" = "アンシャープ閾値：";
-"ThreadCount" = "並列スレッド数：";
-"GrayColorspace" = "グレースケール変換：";
+"WidthUnder" = "幅閾値（px）:";
+"ResizeHeight" = "リサイズ高（px）:";
+"OutputQuality" = "出力品質（％）:";
+"UnsharpRadius" = "アンシャープ半径:";
+"UnsharpSigma" = "アンシャープσ:";
+"UnsharpAmount" = "アンシャープ強度:";
+"UnsharpThreshold" = "アンシャープ閾値:";
+"ThreadCount" = "並列スレッド数:";
+"GrayColorspace" = "グレースケール変換:";
 
 /* Parameter description section */
-"ParamDesc" = "パラメータ：";
-"UnderWidth" = "幅閾値：";
-"ResizeH" = "リサイズ高：";
-"Quality" = "出力品質：";
-"Unsharp" = "アンシャープ：";
-"Radius" = "半径：";
-"Sigma" = "シグマ（σ）：";
-"Amount" = "強度：";
-"Thresh" = "閾値：";
-"Threads" = "スレッド数：";
-"Gray" = "グレー：";
+"ParamDesc" = "パラメータ:";
+"UnderWidth" = "幅閾値:";
+"ResizeH" = "リサイズ高:";
+"Quality" = "出力品質:";
+"Unsharp" = "アンシャープ:";
+"Radius" = "半径:";
+"Sigma" = "シグマ（σ）:";
+"Amount" = "強度:";
+"Thresh" = "閾値:";
+"Threads" = "スレッド数:";
+"Gray" = "グレー:";
 
 /* Parameter descriptions */
 "UnderWidthDesc" = "幅がこの値未満の場合は変換処理、以上の場合は左右分割処理を適用";
@@ -54,24 +54,24 @@
 "GrayDesc" = "ON=8bitグレースケール／OFF=元のカラースペース";
 
 /* Log messages for directory selection */
-"SelectedInputDir" = "入力ディレクトリ選択済: %@";
-"SelectedOutputDir" = "出力ディレクトリ選択済: %@";
+"SelectedInputDir" = "入力ディレクトリ選択済:%@";
+"SelectedOutputDir" = "出力ディレクトリ選択済:%@";
 "Open" = "開く";
 
 /* Log messages for processImages */
-"NoInputOrOutputDir" = "エラー：入力/出力ディレクトリ未指定";
-"NotificationPermissionFailed" = "エラー：通知権限取得失敗: %@";
-"NotificationPermissionNotGranted" = "警告：通知権限なし（通知非表示）";
+"NoInputOrOutputDir" = "エラー:入力/出力ディレクトリ未指定";
+"NotificationPermissionFailed" = "エラー:通知権限取得失敗：%@";
+"NotificationPermissionNotGranted" = "警告:通知権限なし（通知非表示）";
 
 /* Log messages for parameter validation errors */
-"InvalidWidthThreshold" = "エラー：幅閾値は正の整数を指定";
-"InvalidResizeHeight" = "エラー：リサイズ高は正の整数を指定";
-"InvalidOutputQuality" = "エラー：出力品質は1〜100の整数を指定";
-"InvalidUnsharpParameters" = "エラー：アンシャープ値は0以上を指定";
+"InvalidWidthThreshold" = "エラー:幅閾値は正の整数を指定";
+"InvalidResizeHeight" = "エラー:リサイズ高は正の整数を指定";
+"InvalidOutputQuality" = "エラー:出力品質は1〜100の整数を指定";
+"InvalidUnsharpParameters" = "エラー:アンシャープ値は0以上を指定";
 
 /* Log messages for starting image processing and GraphicsMagick check */
-"StartProcessingWithUnsharp" = "処理開始｜幅閾値:%d｜リサイズ高:%d｜品質:%d｜スレッド数:%d｜アンシャープ:%.1fx%.1f+%.1f+%.2f｜グレー:%@";
-"StartProcessingNoUnsharp" = "処理開始｜幅閾値:%d｜リサイズ高:%d｜品質:%d｜スレッド数:%d｜アンシャープ:無効｜グレー:%@";
+"StartProcessingWithUnsharp" = "処理開始｜幅閾値:%d｜リサイズ高：%d｜品質：%d｜スレッド数：%d｜アンシャープ：%.1fx%.1f+%.1f+%.2f｜グレー：%@";
+"StartProcessingNoUnsharp" = "処理開始｜幅閾値:%d｜リサイズ高：%d｜品質：%d｜スレッド数：%d｜アンシャープ：無効｜グレー：%@";
 
 /* Gray colorspace states */
 "GrayEnabled" = "有効";
@@ -79,47 +79,55 @@
 
 /* Log messages for GraphicsMagick and output directory errors */
 "CannotReadOutput" = "プログラムの出力を読み取れません";
-"WhichGMException" = "エラー：'which gm' の実行に失敗しました：%@";
-"WhichGMFailed" = "エラー：'which gm' の実行が失敗したか、空の結果を返しました。";
-"GraphicsMagickVersion" = "GraphicsMagickバージョン: %@";
-"CannotCreateOutputDir" = "エラー：出力ディレクトリ作成失敗: %@";
+"WhichGMException" = "エラー:'which gm' の実行に失敗しました：%@";
+"WhichGMFailed" = "エラー:'which gm' の実行が失敗したか、空の結果を返しました。";
+"GraphicsMagickVersion" = "GraphicsMagickバージョン:%@";
+"CannotCreateOutputDir" = "エラー:出力ディレクトリ作成失敗：%@";
 "GMNotFound" = "GraphicsMagickが見つかりません";
 
 /* Log messages for asynchronous image processing */
-"StartProcessingSubdir" = "サブディレクトリ処理開始: %@";
-"CannotReadInputDir" = "エラー：入力ディレクトリ読み込み不可: %@";
+"StartProcessingSubdir" = "サブディレクトリ処理開始:%@";
+"CannotReadInputDir" = "エラー:入力ディレクトリ読み込み不可：%@";
+"ProcessedSubdir" = "サブディレクトリの処理が完了しました:%@";
 
 /* Log messages for stopping processing */
 "StopProcessingSuccess" = "全処理を正常停止";
-"StopProcessingFailed" = "警告：プロセス停止失敗: %@";
-"CannotExecuteStopCommand" = "エラー：停止コマンド実行不可: %@";
+"StopProcessingFailed" = "警告:プロセス停止失敗：%@";
+"CannotExecuteStopCommand" = "エラー:停止コマンド実行不可：%@";
 "ProcessingStopped" = "処理停止完了";
 
 /* Unknown error */
 "UnknownError" = "不明なエラー";
 
 /* Log messages for processing completion */
-"TotalImagesProcessed" = "総処理画像数: %d 枚";
+"TotalImagesProcessed" = "総処理画像数:%d 枚";
 "ProcessingCompleted" = "処理完了";
-/* Notification messages */
-
-/* Log messages for image dimension errors */
-
-/* gm batch */
-"BatchProcessFailed" = "バッチ処理に失敗しました: %@";
-"CannotCreateOutputSubdir" = "出力サブディレクトリを作成できません: %@";
-"FailedFiles" = "%dファイルの処理に失敗しました";
-"NoImagesInDir" = "ディレクトリに画像がありません: %@";
-"ProcessedSubdir" = "処理済みサブディレクトリ: %@";
 "ProcessingCompletedSuccess" = "%d枚の画像の処理が正常に完了しました";
 "ProcessingCompletedTitle" = "処理完了";
+
+/* Notification messages */
+"ProcessingTimeMinutesSeconds" = "総処理時間:%d分%d秒";
+"ProcessingTimeSeconds" = "処理時間合計:%d秒";
+
+/* Log messages for image dimension errors */
+"BatchProcessFailed" = "バッチ処理に失敗しました:%@";
+"CannotCreateOutputSubdir" = "出力サブディレクトリを作成できません:%@";
+"FailedFiles" = "%dファイルの処理に失敗しました";
 "ProcessingCompletedWithFailures" = "処理が完了しました。%d枚中%d枚失敗";
-"ProcessingFailed" = "処理に失敗しました: %@";
-"TotalProcessingTime" = "総処理時間: %d秒";
-"UsingGM" = "GraphicsMagickを使用中: %@";
-"ProcessingTimeMinutesSeconds" = "總處理時間: %d分鐘%d秒";
-"NoSubdirectories" = "輸入目錄中未找到子目錄";
-"NoImagesInDir" = "目錄中未找到圖片: %@";
-"CannotCreateOutputSubdir" = "無法創建輸出子目錄 %@: %@";
-"ProcessedSubdir" = "完成處理子目錄: %@";
+"ProcessingFailed" = "処理に失敗しました:%@";
+"UsingGM" = "GraphicsMagickを使用中:%@";
+"NoSubdirectories" = "入力ディレクトリにサブディレクトリが見つかりません";
+"NoImagesInDir" = "ディレクトリに画像が見つかりません:%@";
+
+/* Batch Size parameter label */
+"BatchSize" = "バッチごとの画像数：";
+
+/* Batch Size parameter label in description area */
+"BatchSizeLabel" = "バッチ画像数：";
+
+/* Batch Size description */
+"BatchSizeDesc" = "各スレッドが処理する画像の枚数です。適切に設定することで処理効率が向上し、システム負荷を軽減できます。既定値は40枚です";
+
+/* Invalid Batch Size error message */
+"InvalidBatchSize" = "バッチサイズが無効です。1〜1000の整数を入力してください。既定値（40）を使用します。";
 

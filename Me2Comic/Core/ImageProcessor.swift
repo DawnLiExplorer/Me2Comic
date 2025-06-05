@@ -18,6 +18,7 @@ struct ProcessingParameters {
     let unsharpSigma: String
     let unsharpAmount: String
     let unsharpThreshold: String
+    let batchSize: String
     let useGrayColorspace: Bool
 }
 
@@ -404,7 +405,7 @@ class ImageProcessor: ObservableObject {
         }
     }
     
-    // Split images into batches
+    // Split images into batches with configurable batch size
     private func splitIntoBatches(_ images: [URL], batchSize: Int) -> [[URL]] {
         var result: [[URL]] = []
         var currentBatch: [URL] = []
@@ -423,6 +424,17 @@ class ImageProcessor: ObservableObject {
         }
         
         return result
+    }
+    
+    // Validate batch size parameter, ensuring it's within valid range
+    private func validateBatchSize(_ batchSizeStr: String) -> Int {
+        guard let batchSize = Int(batchSizeStr), batchSize >= 1, batchSize <= 1000 else {
+            DispatchQueue.main.async {
+                self.logMessages.append(NSLocalizedString("InvalidBatchSize", comment: ""))
+            }
+            return 40 // 默认值
+        }
+        return batchSize
     }
     
     // Thread-safe update of processed count
@@ -590,7 +602,7 @@ class ImageProcessor: ObservableObject {
                 var allBatches: [(subdirName: String, outputDir: URL, images: [URL])] = []
                 
                 // Optimal batch size (adjust based on testing)
-                let batchSize = 10
+                // let batchSize = 10
                 
                 // Prepare all batches
                 for subdirectory in subdirectories {
@@ -631,7 +643,8 @@ class ImageProcessor: ObservableObject {
                         self.logMessages.append(String(format: NSLocalizedString("StartProcessingSubdir", comment: ""), subdirName))
                     }
                     
-                    // Split images into batches
+                    // Split into batches using user-defined batch size
+                    let batchSize = validateBatchSize(parameters.batchSize)
                     let batches = self.splitIntoBatches(imageFiles, batchSize: batchSize)
                     
                     // Add all batches to the collection
@@ -737,8 +750,8 @@ class ImageProcessor: ObservableObject {
                         
                         // Report total processed
                         self.logMessages.append(String(format: NSLocalizedString("TotalImagesProcessed", comment: ""), finalProcessedCount))
-                        self.logMessages.append(NSLocalizedString("ProcessingCompleted", comment: ""))
                         self.logMessages.append(timeMessage)
+                        self.logMessages.append(NSLocalizedString("ProcessingCompleted", comment: ""))
                         
                         // Send notification
                         self.sendCompletionNotification(totalProcessed: finalProcessedCount, failedCount: failedFiles.count)

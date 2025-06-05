@@ -81,6 +81,7 @@ struct SettingsPanelView: View {
     @Binding var unsharpSigma: String
     @Binding var unsharpAmount: String
     @Binding var unsharpThreshold: String
+    @Binding var batchSize: String
     @Binding var useGrayColorspace: Bool
     let isProcessing: Bool
 
@@ -93,6 +94,7 @@ struct SettingsPanelView: View {
             ParameterInputView(title: NSLocalizedString("UnsharpSigma", comment: ""), text: $unsharpSigma, isProcessing: isProcessing)
             ParameterInputView(title: NSLocalizedString("UnsharpAmount", comment: ""), text: $unsharpAmount, isProcessing: isProcessing)
             ParameterInputView(title: NSLocalizedString("UnsharpThreshold", comment: ""), text: $unsharpThreshold, isProcessing: isProcessing)
+            ParameterInputView(title: NSLocalizedString("BatchSize", comment: ""), text: $batchSize, isProcessing: isProcessing)
 
             // Thread count picker
             HStack {
@@ -182,6 +184,7 @@ let parameterDescriptions: [ParameterInfo] = [
     ParameterInfo(label: NSLocalizedString("Sigma", comment: ""), description: NSLocalizedString("SigmaDesc", comment: "")),
     ParameterInfo(label: NSLocalizedString("Amount", comment: ""), description: NSLocalizedString("AmountDesc", comment: "")),
     ParameterInfo(label: NSLocalizedString("Thresh", comment: ""), description: NSLocalizedString("ThreshDesc", comment: "")),
+    ParameterInfo(label: NSLocalizedString("BatchSizeLabel", comment: ""), description: NSLocalizedString("BatchSizeDesc", comment: "")),
     ParameterInfo(label: NSLocalizedString("Threads", comment: ""), description: NSLocalizedString("ThreadsDesc", comment: "")),
     ParameterInfo(label: NSLocalizedString("Gray", comment: ""), description: NSLocalizedString("GrayDesc", comment: ""))
 ]
