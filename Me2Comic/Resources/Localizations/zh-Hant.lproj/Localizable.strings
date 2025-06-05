@@ -78,22 +78,20 @@
 "GrayDisabled" = "關閉";
 
 /* Log messages for GraphicsMagick and output directory errors */
-"CannotReadOutput" = "無法讀取程式輸出";
+"CannotReadOutput" = "無法解析指令的輸出結果";
 "WhichGMException" = "錯誤：執行 'which gm' 命令失敗：%@";
 "WhichGMFailed" = "錯誤：'which gm' 命令失敗或傳回空值。";
 "GraphicsMagickVersion" = "GraphicsMagick 版本：%@";
 "CannotCreateOutputDir" = "錯誤：無法建立輸出目錄：%@";
-"GMNotFound" = "未找到GraphicsMagick";
+"CannotRunGraphicsMagick" = "無法啟動 GraphicsMagick：%@";
+"GraphicsMagickRunFailed" = "GraphicsMagick 執行失敗：%@";
+"ProcessingCancelledNoStart" = "處理已取消，尚未開始執行";
 
 /* Log messages for asynchronous image processing */
 "StartProcessingSubdir" = "開始處理子目錄：%@";
-"CannotReadInputDir" = "錯誤：無法讀取輸入目錄：%@";
 "ProcessedSubdir" = "完成處理子目錄：%@";
 
 /* Log messages for stopping processing */
-"StopProcessingSuccess" = "成功停止所有處理操作";
-"StopProcessingFailed" = "警告：停止處理程序失敗：%@";
-"CannotExecuteStopCommand" = "錯誤：無法執行 終止 命令：%@";
 "ProcessingStopped" = "處理已停止";
 
 /* Unknown error */
@@ -115,7 +113,6 @@
 "FailedFiles" = "處理失敗的檔案數：%d";
 "ProcessingCompletedWithFailures" = "處理完成，%d張圖像中%d張失敗";
 "ProcessingFailed" = "處理失敗：%@";
-"UsingGM" = "正在使用GraphicsMagick：%@";
 "NoSubdirectories" = "輸入目錄中未找到子目錄";
 "NoImagesInDir" = "目錄中未找到圖片：%@";
 

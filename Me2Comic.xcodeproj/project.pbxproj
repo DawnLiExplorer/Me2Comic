@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		FC0976862DC72DF900C307FD /* UIComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC0976852DC72DF900C307FD /* UIComponents.swift */; };
+		FC8E3A462DF1D41400A375BA /* ImageProcessorModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC8E3A452DF1D41400A375BA /* ImageProcessorModels.swift */; };
 		FCB9B0C82DBDFD4500110511 /* Me2ComicApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCB9B0C72DBDFD4500110511 /* Me2ComicApp.swift */; };
 		FCB9B0CA2DBDFD4500110511 /* ImageProcessorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCB9B0C92DBDFD4500110511 /* ImageProcessorView.swift */; };
 		FCB9B0CC2DBDFD4700110511 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FCB9B0CB2DBDFD4700110511 /* Assets.xcassets */; };
@@ -18,6 +19,7 @@
 /* Begin PBXFileReference section */
 		FC0976852DC72DF900C307FD /* UIComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIComponents.swift; sourceTree = "<group>"; };
 		FC8BA09D2DCB7E1B007582B9 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		FC8E3A452DF1D41400A375BA /* ImageProcessorModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageProcessorModels.swift; sourceTree = "<group>"; };
 		FC96492D2DCA646B00DAB31A /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
 		FCB9B0C42DBDFD4500110511 /* Me2Comic.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Me2Comic.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FCB9B0C72DBDFD4500110511 /* Me2ComicApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Me2ComicApp.swift; sourceTree = "<group>"; };
@@ -89,6 +91,7 @@
 			isa = PBXGroup;
 			children = (
 				FCED852F2DD1B89500E299D1 /* ImageProcessor.swift */,
+				FC8E3A452DF1D41400A375BA /* ImageProcessorModels.swift */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -175,6 +178,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FC8E3A462DF1D41400A375BA /* ImageProcessorModels.swift in Sources */,
 				FCB9B0CA2DBDFD4500110511 /* ImageProcessorView.swift in Sources */,
 				FC0976862DC72DF900C307FD /* UIComponents.swift in Sources */,
 				FCED85302DD1B89500E299D1 /* ImageProcessor.swift in Sources */,

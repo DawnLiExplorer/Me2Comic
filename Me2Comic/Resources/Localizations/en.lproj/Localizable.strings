@@ -78,22 +78,20 @@
 "GrayDisabled" = "Disabled";
 
 /* Log messages for GraphicsMagick and output directory errors */
-"CannotReadOutput" = "Failed to read program output";
+"CannotReadOutput" = "Failed to parse the output of the command";
 "WhichGMException" = "Error: Failed to run 'which gm': %@";
 "WhichGMFailed" = "Error: 'which gm' failed or returned empty.";
 "GraphicsMagickVersion" = "GraphicsMagick version: %@";
 "CannotCreateOutputDir" = "Error: Cannot create output directory: %@";
-"GMNotFound" = "GraphicsMagick not found";
+"CannotRunGraphicsMagick" = "Failed to launch GraphicsMagick: %@";
+"GraphicsMagickRunFailed" = "GraphicsMagick execution failed: %@";
+"ProcessingCancelledNoStart" = "Processing cancelled before it started";
 
 /* Log messages for asynchronous image processing */
 "StartProcessingSubdir" = "Starting processing subdirectory: %@";
-"CannotReadInputDir" = "Error: Cannot read input directory: %@";
 "ProcessedSubdir" = "Completed processing subdirectory: %@";
 
 /* Log messages for stopping processing */
-"StopProcessingSuccess" = "Successfully stopped all processing operations";
-"StopProcessingFailed" = "Warning: Failed to stop processing: %@";
-"CannotExecuteStopCommand" = "Error: Cannot execute stop command: %@";
 "ProcessingStopped" = "Processing stopped";
 
 /* Unknown error */
@@ -115,7 +113,6 @@
 "FailedFiles" = "Failed to process %d files";
 "ProcessingCompletedWithFailures" = "Processing completed with %d failures out of %d images";
 "ProcessingFailed" = "Processing failed: %@";
-"UsingGM" = "Using GraphicsMagick at: %@";
 "NoSubdirectories" = "No subdirectories found in input directory";
 "NoImagesInDir" = "No images found in directory: %@";
 
