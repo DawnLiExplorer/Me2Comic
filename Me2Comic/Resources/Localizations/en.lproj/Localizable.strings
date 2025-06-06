@@ -72,6 +72,7 @@
 /* Log messages for starting image processing and GraphicsMagick check */
 "StartProcessingWithUnsharp" = "Starting image processing, Width threshold: %d, Resize height: %d, Output quality: %d, Threads: %d, Unsharp: %.1fx%.1f+%.1f+%.2f, Colorspace GRAY: %@";
 "StartProcessingNoUnsharp" = "Starting image processing, Width threshold: %d, Resize height: %d, Output quality: %d, Threads: %d, Unsharp: Disabled, Colorspace GRAY: %@";
+"GMNotFound" = "GraphicsMagick not found";
 
 /* Gray colorspace states */
 "GrayEnabled" = "Enabled";
@@ -79,12 +80,8 @@
 
 /* Log messages for GraphicsMagick and output directory errors */
 "CannotReadOutput" = "Failed to parse the output of the command";
-"WhichGMException" = "Error: Failed to run 'which gm': %@";
-"WhichGMFailed" = "Error: 'which gm' failed or returned empty.";
 "GraphicsMagickVersion" = "GraphicsMagick version: %@";
 "CannotCreateOutputDir" = "Error: Cannot create output directory: %@";
-"CannotRunGraphicsMagick" = "Failed to launch GraphicsMagick: %@";
-"GraphicsMagickRunFailed" = "GraphicsMagick execution failed: %@";
 "ProcessingCancelledNoStart" = "Processing cancelled before it started";
 
 /* Log messages for asynchronous image processing */
@@ -99,9 +96,9 @@
 
 /* Log messages for processing completion */
 "TotalImagesProcessed" = "Processed %d images";
-"ProcessingCompleted" = "Processing completed";
-"ProcessingCompletedSuccess" = "Processing completed successfully for %d images";
-"ProcessingCompletedTitle" = "Processing Completed";
+"ProcessingComplete" = "Processing completed";
+"ProcessingCompleteSuccess" = "Processing completed successfully for %d images";
+"ProcessingCompleteTitle" = "Processing Completed";
 
 /* Notification messages */
 "ProcessingTimeMinutesSeconds" = "Total processing time: %d minutes %d seconds";
@@ -111,7 +108,7 @@
 "BatchProcessFailed" = "Batch processing failed: %@";
 "CannotCreateOutputSubdir" = "Cannot create output subdirectory: %@";
 "FailedFiles" = "Failed to process %d files";
-"ProcessingCompletedWithFailures" = "Processing completed with %d failures out of %d images";
+"ProcessingCompleteWithFailures" = "Processing completed with %d failures out of %d images";
 "ProcessingFailed" = "Processing failed: %@";
 "NoSubdirectories" = "No subdirectories found in input directory";
 "NoImagesInDir" = "No images found in directory: %@";

@@ -72,6 +72,7 @@
 /* Log messages for starting image processing and GraphicsMagick check */
 "StartProcessingWithUnsharp" = "开始处理图片，宽度阈值：%d，Resize 高度：%d，输出质量：%d，线程数：%d，Unsharp：%.1fx%.1f+%.1f+%.2f，Colorspace GRAY：%@";
 "StartProcessingNoUnsharp" = "开始处理图片，宽度阈值：%d，Resize 高度：%d，输出质量：%d，线程数：%d，Unsharp：禁用，Colorspace GRAY：%@";
+"GMNotFound" = "未找到 GraphicsMagick";
 
 /* Gray colorspace states */
 "GrayEnabled" = "启用";
@@ -79,12 +80,8 @@
 
 /* Log messages for GraphicsMagick and output directory errors */
 "CannotReadOutput" = "无法解析命令的输出结果";
-"WhichGMException" = "错误：执行 'which gm' 命令失败：%@";
-"WhichGMFailed" = "错误：'which gm' 命令失败或返回空。";
 "GraphicsMagickVersion" = "GraphicsMagick 版本：%@";
 "CannotCreateOutputDir" = "错误：无法创建输出目录：%@";
-"CannotRunGraphicsMagick" = "无法运行GraphicsMagick：%@";
-"GraphicsMagickRunFailed" = "GraphicsMagick运行失败：%@";
 "ProcessingCancelledNoStart" = "处理已取消，未开始执行";
 
 /* Log messages for asynchronous image processing */
@@ -99,9 +96,9 @@
 
 /* Log messages for processing completion */
 "TotalImagesProcessed" = "共处理 %d 张图片";
-"ProcessingCompleted" = "处理完成";
-"ProcessingCompletedSuccess" = "成功处理%d张图像";
-"ProcessingCompletedTitle" = "处理完成";
+"ProcessingComplete" = "处理完成";
+"ProcessingCompleteSuccess" = "成功处理%d张图像";
+"ProcessingCompleteTitle" = "处理完成";
 
 /* Notification messages */
 "ProcessingTimeMinutesSeconds" = "总处理时间：%d分钟%d秒";
@@ -111,7 +108,7 @@
 "BatchProcessFailed" = "批量处理失败：%@";
 "CannotCreateOutputSubdir" = "无法创建输出子目录：%@";
 "FailedFiles" = "处理失败的文件数：%d";
-"ProcessingCompletedWithFailures" = "处理完成，%d张图像中%d张失败";
+"ProcessingCompleteWithFailures" = "处理完成，%d张图像中%d张失败";
 "ProcessingFailed" = "处理失败：%@";
 "NoSubdirectories" = "输入目录中未找到子目录";
 "NoImagesInDir" = "目录中未找到图片：%@";

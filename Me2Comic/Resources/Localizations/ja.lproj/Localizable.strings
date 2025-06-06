@@ -72,6 +72,7 @@
 /* Log messages for starting image processing and GraphicsMagick check */
 "StartProcessingWithUnsharp" = "処理開始｜幅閾値:%d｜リサイズ高：%d｜品質：%d｜スレッド数：%d｜アンシャープ：%.1fx%.1f+%.1f+%.2f｜グレー：%@";
 "StartProcessingNoUnsharp" = "処理開始｜幅閾値:%d｜リサイズ高：%d｜品質：%d｜スレッド数：%d｜アンシャープ：無効｜グレー：%@";
+"GMNotFound" = "GraphicsMagick が見つかりません";
 
 /* Gray colorspace states */
 "GrayEnabled" = "有効";
@@ -79,12 +80,8 @@
 
 /* Log messages for GraphicsMagick and output directory errors */
 "CannotReadOutput" = "コマンドの出力結果を解析できませんでした";
-"WhichGMException" = "エラー:'which gm' の実行に失敗しました：%@";
-"WhichGMFailed" = "エラー:'which gm' の実行が失敗したか、空の結果を返しました。";
 "GraphicsMagickVersion" = "GraphicsMagickバージョン:%@";
 "CannotCreateOutputDir" = "エラー:出力ディレクトリ作成失敗：%@";
-"CannotRunGraphicsMagick" = "GraphicsMagick の起動に失敗しました：%@";
-"GraphicsMagickRunFailed" = "GraphicsMagick の実行に失敗しました：%@";
 "ProcessingCancelledNoStart" = "処理が開始される前にキャンセルされました";
 
 /* Log messages for asynchronous image processing */
@@ -99,9 +96,9 @@
 
 /* Log messages for processing completion */
 "TotalImagesProcessed" = "総処理画像数:%d 枚";
-"ProcessingCompleted" = "処理完了";
-"ProcessingCompletedSuccess" = "%d枚の画像の処理が正常に完了しました";
-"ProcessingCompletedTitle" = "処理完了";
+"ProcessingComplete" = "処理完了";
+"ProcessingCompleteSuccess" = "%d枚の画像の処理が正常に完了しました";
+"ProcessingCompleteTitle" = "処理完了";
 
 /* Notification messages */
 "ProcessingTimeMinutesSeconds" = "総処理時間:%d分%d秒";
@@ -111,7 +108,7 @@
 "BatchProcessFailed" = "バッチ処理に失敗しました:%@";
 "CannotCreateOutputSubdir" = "出力サブディレクトリを作成できません:%@";
 "FailedFiles" = "%dファイルの処理に失敗しました";
-"ProcessingCompletedWithFailures" = "処理が完了しました。%d枚中%d枚失敗";
+"ProcessingCompleteWithFailures" = "処理が完了しました。%d枚中%d枚失敗";
 "ProcessingFailed" = "処理に失敗しました:%@";
 "NoSubdirectories" = "入力ディレクトリにサブディレクトリが見つかりません";
 "NoImagesInDir" = "ディレクトリに画像が見つかりません:%@";
