@@ -16,10 +16,10 @@ struct Me2ComicApp: App {
         WindowGroup {
             ImageProcessorView()
         }
-        .windowResizability(.contentMinSize)
+        .windowStyle(.hiddenTitleBar) // 隐藏标题栏
+        .windowResizability(.contentMinSize) // 保持最小内容尺寸
         Settings {
             AboutView()
-            //  .preferredColorScheme(.dark)
         }
     }
 }
@@ -27,12 +27,11 @@ struct Me2ComicApp: App {
 class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApplication.shared.appearance = NSAppearance(named: .darkAqua)
-    
+        
         if let window = NSApp.windows.first {
-            window.titleVisibility = .hidden
-            window.titlebarAppearsTransparent = true
-            window.styleMask.insert(.fullSizeContentView)
-            window.isMovableByWindowBackground = true
+            window.isMovableByWindowBackground = true // 启用全局拖拽
+            window.titlebarAppearsTransparent = true // 保持标题栏透明
+            window.styleMask.insert(.fullSizeContentView) // 内容扩展到标题栏区域
         }
     }
 }
