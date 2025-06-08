@@ -3,21 +3,26 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 63;
+	objectVersion = 90;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		FC0976862DC72DF900C307FD /* UIComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC0976852DC72DF900C307FD /* UIComponents.swift */; };
+		FC19ED752DF46431007A2F24 /* ThreadSafeArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC19ED742DF46429007A2F24 /* ThreadSafeArray.swift */; };
+		FC19ED772DF46446007A2F24 /* ManagedTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC19ED762DF4643F007A2F24 /* ManagedTask.swift */; };
 		FC8E3A462DF1D41400A375BA /* ImageProcessorModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC8E3A452DF1D41400A375BA /* ImageProcessorModels.swift */; };
 		FCB9B0C82DBDFD4500110511 /* Me2ComicApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCB9B0C72DBDFD4500110511 /* Me2ComicApp.swift */; };
 		FCB9B0CA2DBDFD4500110511 /* ImageProcessorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCB9B0C92DBDFD4500110511 /* ImageProcessorView.swift */; };
 		FCB9B0CC2DBDFD4700110511 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FCB9B0CB2DBDFD4700110511 /* Assets.xcassets */; };
 		FCED85302DD1B89500E299D1 /* ImageProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCED852F2DD1B89500E299D1 /* ImageProcessor.swift */; };
+		FCF717182DF49EFA001999BD /* GraphicsMagickHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCF717172DF49EF6001999BD /* GraphicsMagickHelper.swift */; };
 		FCF8E79E2DC9F8F60044291C /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = FCF8E7A02DC9F8F60044291C /* Localizable.strings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		FC0976852DC72DF900C307FD /* UIComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIComponents.swift; sourceTree = "<group>"; };
+		FC19ED742DF46429007A2F24 /* ThreadSafeArray.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadSafeArray.swift; sourceTree = "<group>"; };
+		FC19ED762DF4643F007A2F24 /* ManagedTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedTask.swift; sourceTree = "<group>"; };
 		FC8BA09D2DCB7E1B007582B9 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		FC8E3A452DF1D41400A375BA /* ImageProcessorModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageProcessorModels.swift; sourceTree = "<group>"; };
 		FC96492D2DCA646B00DAB31A /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -27,6 +32,7 @@
 		FCB9B0CB2DBDFD4700110511 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FCB9B0D02DBDFD4700110511 /* Me2Comic.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Me2Comic.entitlements; sourceTree = "<group>"; };
 		FCED852F2DD1B89500E299D1 /* ImageProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageProcessor.swift; sourceTree = "<group>"; };
+		FCF717172DF49EF6001999BD /* GraphicsMagickHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphicsMagickHelper.swift; sourceTree = "<group>"; };
 		FCF8E79F2DC9F8F60044291C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		FCF8E7A12DC9F8F80044291C /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -34,14 +40,21 @@
 /* Begin PBXFrameworksBuildPhase section */
 		FCB9B0C12DBDFD4500110511 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		FC19ED782DF464CC007A2F24 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				FC19ED762DF4643F007A2F24 /* ManagedTask.swift */,
+				FC19ED742DF46429007A2F24 /* ThreadSafeArray.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
 		FC39697C2DCE28FA006BB484 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -78,6 +91,8 @@
 		FCB9B0C62DBDFD4500110511 /* Me2Comic */ = {
 			isa = PBXGroup;
 			children = (
+				FCF717162DF49EF2001999BD /* ExternalTools */,
+				FC19ED782DF464CC007A2F24 /* Utilities */,
 				FCF6FDC42DF08BBA00572AC1 /* Views */,
 				FCF6FDC32DF08BA500572AC1 /* Core */,
 				FC39697C2DCE28FA006BB484 /* Resources */,
@@ -105,6 +120,14 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
+		FCF717162DF49EF2001999BD /* ExternalTools */ = {
+			isa = PBXGroup;
+			children = (
+				FCF717172DF49EF6001999BD /* GraphicsMagickHelper.swift */,
+			);
+			path = ExternalTools;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -117,8 +140,6 @@
 				FCB9B0C22DBDFD4500110511 /* Resources */,
 			);
 			buildRules = (
-			);
-			dependencies = (
 			);
 			name = Me2Comic;
 			productName = Me2Comic;
@@ -133,7 +154,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1520;
-				LastUpgradeCheck = 1520;
+				LastUpgradeCheck = 1640;
 				TargetAttributes = {
 					FCB9B0C32DBDFD4500110511 = {
 						CreatedOnToolsVersion = 15.2;
@@ -141,7 +162,6 @@
 				};
 			};
 			buildConfigurationList = FCB9B0BF2DBDFD4500110511 /* Build configuration list for PBXProject "Me2Comic" */;
-			compatibilityVersion = "Xcode 15.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -152,6 +172,7 @@
 				"zh-Hant",
 			);
 			mainGroup = FCB9B0BB2DBDFD4500110511;
+			preferredProjectObjectVersion = 90;
 			productRefGroup = FCB9B0C52DBDFD4500110511 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -164,27 +185,26 @@
 /* Begin PBXResourcesBuildPhase section */
 		FCB9B0C22DBDFD4500110511 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				FCF8E79E2DC9F8F60044291C /* Localizable.strings in Resources */,
 				FCB9B0CC2DBDFD4700110511 /* Assets.xcassets in Resources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		FCB9B0C02DBDFD4500110511 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
+				FC19ED772DF46446007A2F24 /* ManagedTask.swift in Sources */,
 				FC8E3A462DF1D41400A375BA /* ImageProcessorModels.swift in Sources */,
+				FCF717182DF49EFA001999BD /* GraphicsMagickHelper.swift in Sources */,
 				FCB9B0CA2DBDFD4500110511 /* ImageProcessorView.swift in Sources */,
 				FC0976862DC72DF900C307FD /* UIComponents.swift in Sources */,
 				FCED85302DD1B89500E299D1 /* ImageProcessor.swift in Sources */,
+				FC19ED752DF46431007A2F24 /* ThreadSafeArray.swift in Sources */,
 				FCB9B0C82DBDFD4500110511 /* Me2ComicApp.swift in Sources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
@@ -203,11 +223,12 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		FCB9B0D12DBDFD4700110511 /* Debug */ = {
+		FCB9B0D12DBDFD4700110511 /* Debug configuration for PBXProject "Me2Comic" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -237,7 +258,9 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 2XCFSMR77F;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -266,11 +289,12 @@
 			};
 			name = Debug;
 		};
-		FCB9B0D22DBDFD4700110511 /* Release */ = {
+		FCB9B0D22DBDFD4700110511 /* Release configuration for PBXProject "Me2Comic" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -300,7 +324,9 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 2XCFSMR77F;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -321,20 +347,19 @@
 			};
 			name = Release;
 		};
-		FCB9B0D42DBDFD4700110511 /* Debug */ = {
+		FCB9B0D42DBDFD4700110511 /* Debug configuration for PBXNativeTarget "Me2Comic" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD)";
+				ARCHS = x86_64;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Me2Comic/Me2Comic.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEAD_CODE_STRIPPING = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = 2XCFSMR77F;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -356,10 +381,10 @@
 			};
 			name = Debug;
 		};
-		FCB9B0D52DBDFD4700110511 /* Release */ = {
+		FCB9B0D52DBDFD4700110511 /* Release configuration for PBXNativeTarget "Me2Comic" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD)";
+				ARCHS = x86_64;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Me2Comic/Me2Comic.entitlements;
@@ -368,11 +393,12 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = 2XCFSMR77F;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Me2Comic/Info.plist;
@@ -401,19 +427,17 @@
 		FCB9B0BF2DBDFD4500110511 /* Build configuration list for PBXProject "Me2Comic" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				FCB9B0D12DBDFD4700110511 /* Debug */,
-				FCB9B0D22DBDFD4700110511 /* Release */,
+				FCB9B0D12DBDFD4700110511 /* Debug configuration for PBXProject "Me2Comic" */,
+				FCB9B0D22DBDFD4700110511 /* Release configuration for PBXProject "Me2Comic" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		FCB9B0D32DBDFD4700110511 /* Build configuration list for PBXNativeTarget "Me2Comic" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				FCB9B0D42DBDFD4700110511 /* Debug */,
-				FCB9B0D52DBDFD4700110511 /* Release */,
+				FCB9B0D42DBDFD4700110511 /* Debug configuration for PBXNativeTarget "Me2Comic" */,
+				FCB9B0D52DBDFD4700110511 /* Release configuration for PBXNativeTarget "Me2Comic" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */

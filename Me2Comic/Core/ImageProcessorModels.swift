@@ -21,8 +21,7 @@ struct ProcessingParameters {
 }
 
 /// Manages a processing task with a unique ID
-struct ManagedTask: Identifiable {
-    let id = UUID()
-    let process: Process
-}
-
+// struct ManagedTask: Identifiable {
+//   let id = UUID()
+//    let process: Process
+// }

@@ -72,7 +72,10 @@
 /* Log messages for starting image processing and GraphicsMagick check */
 "StartProcessingWithUnsharp" = "Starting image processing, Width threshold: %d, Resize height: %d, Output quality: %d, Threads: %d, Unsharp: %.1fx%.1f+%.1f+%.2f, Colorspace GRAY: %@";
 "StartProcessingNoUnsharp" = "Starting image processing, Width threshold: %d, Resize height: %d, Output quality: %d, Threads: %d, Unsharp: Disabled, Colorspace GRAY: %@";
-"GMNotFound" = "GraphicsMagick not found";
+"GMNotFoundViaWhich" = "GraphicsMagick (gm) not found via `which`. Please ensure it is properly installed.";
+"GMWhichCommandFailed" = "Failed to execute `which gm`. It might be due to permission or PATH issues.";
+"GMExecutionFailed" = "Found gm executable, but it failed to run. Please check permissions or compatibility.";
+"GMExecutionException" = "An exception occurred while trying to run gm. Installation or permissions may be incorrect.";
 
 /* Gray colorspace states */
 "GrayEnabled" = "Enabled";

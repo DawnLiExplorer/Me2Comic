@@ -28,57 +28,6 @@ class ImageProcessor: ObservableObject {
         }
     }
 
-    // Safely detect GraphicsMagick executable path with predefined paths
-    private func detectGMPathSafely() -> String? {
-        // First check known safe paths
-        let knownPaths = ["/opt/homebrew/bin/gm", "/usr/local/bin/gm", "/usr/bin/gm"]
-
-        for path in knownPaths {
-            if FileManager.default.fileExists(atPath: path) {
-                return path
-            }
-        }
-
-        // Fall back to which command if known paths don't exist
-        return detectGMPathViaWhich()
-    }
-
-    // Detect GraphicsMagick executable path using which command
-    private func detectGMPathViaWhich() -> String? {
-        let whichTask = Process()
-        whichTask.executableURL = URL(fileURLWithPath: "/usr/bin/which")
-        whichTask.arguments = ["gm"]
-
-        var env = ProcessInfo.processInfo.environment
-        let homebrewPaths = ["/opt/homebrew/bin", "/usr/local/bin"]
-        let originalPath = env["PATH"] ?? ""
-        env["PATH"] = homebrewPaths.joined(separator: ":") + ":" + originalPath
-        whichTask.environment = env
-
-        let pipe = Pipe()
-        whichTask.standardOutput = pipe
-        whichTask.standardError = pipe
-
-        do {
-            try whichTask.run()
-            whichTask.waitUntilExit()
-
-            let data = pipe.fileHandleForReading.readDataToEndOfFile()
-            guard whichTask.terminationStatus == 0,
-                  let output = String(data: data, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines),
-                  !output.isEmpty
-            else {
-                // Simplified error message
-                logMessages.append(NSLocalizedString("GMNotFound", comment: ""))
-                return nil
-            }
-            return output
-        } catch {
-            logMessages.append(NSLocalizedString("GMNotFound", comment: ""))
-            return nil
-        }
-    }
-
     // Cancel all processing tasks
     func stopProcessing() {
         // Set cancel flag safely using serial queue (barrier ensures exclusive write)
@@ -112,61 +61,6 @@ class ImageProcessor: ObservableObject {
                 }
             }
         }
-    }
-
-    // Properly escape path for shell command
-    private func escapePathForShell(_ path: String) -> String {
-        // Replace backslashes with double backslashes
-        var escapedPath = path.replacingOccurrences(of: "\\", with: "\\\\")
-
-        // Replace double quotes with escaped double quotes
-        escapedPath = escapedPath.replacingOccurrences(of: "\"", with: "\\\"")
-
-        // Wrap in double quotes to handle spaces and special characters
-        return "\"\(escapedPath)\""
-    }
-
-    // Generate GraphicsMagick convert command
-    private func buildConvertCommand(
-        inputPath: String,
-        outputPath: String,
-        cropParams: String?,
-        resizeHeight: Int,
-        quality: Int,
-        unsharpRadius: Float,
-        unsharpSigma: Float,
-        unsharpAmount: Float,
-        unsharpThreshold: Float,
-        useGrayColorspace: Bool
-    ) -> String {
-        // Escape paths for shell command
-        let escapedInputPath = escapePathForShell(inputPath)
-        let escapedOutputPath = escapePathForShell(outputPath)
-
-        var command = "convert \(escapedInputPath)"
-
-        // Add crop parameters
-        if let crop = cropParams {
-            command += " -crop \(crop)"
-        }
-
-        // Add resize parameters
-        command += " -resize x\(resizeHeight)"
-
-        // Add colorspace parameters
-        if useGrayColorspace {
-            command += " -colorspace GRAY"
-        }
-
-        // Add unsharp parameters
-        if unsharpAmount > 0 {
-            command += " -unsharp \(unsharpRadius)x\(unsharpSigma)+\(unsharpAmount)+\(unsharpThreshold)"
-        }
-
-        // Add quality parameters and output path
-        command += " -quality \(quality) \(escapedOutputPath)"
-
-        return command
     }
 
     // Process a batch of images
@@ -213,40 +107,14 @@ class ImageProcessor: ObservableObject {
             let outputBasePath = outputDir.appendingPathComponent(filenameWithoutExt).path
             
             // Get image dimensions
-            do {
-                let dimensionsTask = Process()
-                dimensionsTask.executableURL = URL(fileURLWithPath: gmPath)
-                dimensionsTask.arguments = ["identify", "-format", "%w %h", imageFile.path]
-                
-                let pipe = Pipe()
-                dimensionsTask.standardOutput = pipe
-                dimensionsTask.standardError = pipe
-                
-                try dimensionsTask.run()
-                dimensionsTask.waitUntilExit()
-                
-                let data = pipe.fileHandleForReading.readDataToEndOfFile()
-                guard dimensionsTask.terminationStatus == 0,
-                      let output = String(data: data, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines),
-                      !output.isEmpty
-                else {
-                    failedFiles.append(filename)
-                    continue
-                }
-                
-                let dimensions = output.split(separator: " ")
-                guard dimensions.count == 2,
-                      let width = Int(dimensions[0]),
-                      let height = Int(dimensions[1])
-                else {
-                    failedFiles.append(filename)
-                    continue
-                }
+            if let dimensions = GraphicsMagickHelper.getImageDimensions(imagePath: imageFile.path, gmPath: gmPath) {
+                let width = dimensions.width
+                let height = dimensions.height
                 
                 // Process based on width threshold
                 if width < widthThreshold {
                     // Process entire image (single image processing logic)
-                    let command = buildConvertCommand(
+                    let command = GraphicsMagickHelper.buildConvertCommand(
                         inputPath: imageFile.path,
                         outputPath: "\(outputBasePath).jpg",
                         cropParams: nil,
@@ -265,7 +133,7 @@ class ImageProcessor: ObservableObject {
                     let cropWidth = width / 2
                     
                     // Process right half (-1.jpg)
-                    let rightCropCommand = buildConvertCommand(
+                    let rightCropCommand = GraphicsMagickHelper.buildConvertCommand(
                         inputPath: imageFile.path,
                         outputPath: "\(outputBasePath)-1.jpg",
                         cropParams: "\(cropWidth)x\(height)+\(cropWidth)+0",
@@ -280,7 +148,7 @@ class ImageProcessor: ObservableObject {
                     batchCommands.append(rightCropCommand + "\n")
                     
                     // Process left half (-2.jpg)
-                    let leftCropCommand = buildConvertCommand(
+                    let leftCropCommand = GraphicsMagickHelper.buildConvertCommand(
                         inputPath: imageFile.path,
                         outputPath: "\(outputBasePath)-2.jpg",
                         cropParams: "\(cropWidth)x\(height)+0+0",
@@ -295,7 +163,7 @@ class ImageProcessor: ObservableObject {
                     batchCommands.append(leftCropCommand + "\n")
                     processedCount += 1
                 }
-            } catch {
+            } else {
                 failedFiles.append(filename)
             }
         }
@@ -523,9 +391,10 @@ class ImageProcessor: ObservableObject {
     }
     
     // Log start parameters
-    private func logStartParameters(_ threshold: Int, _ resize: Int, _ qual: Int, _ threadCount: Int, 
-                                   _ radius: Float, _ sigma: Float, _ amount: Float, _ unsharpThreshold: Float, 
-                                   _ useGrayColorspace: Bool) {
+    private func logStartParameters(_ threshold: Int, _ resize: Int, _ qual: Int, _ threadCount: Int,
+                                    _ radius: Float, _ sigma: Float, _ amount: Float, _ unsharpThreshold: Float,
+                                    _ useGrayColorspace: Bool)
+    {
         if amount > 0 {
             logMessages.append(String(format: NSLocalizedString("StartProcessingWithUnsharp", comment: ""),
                                       threshold, resize, qual, threadCount, radius, sigma, amount, unsharpThreshold,
@@ -540,8 +409,9 @@ class ImageProcessor: ObservableObject {
     // Verify GraphicsMagick installation
     private func verifyGraphicsMagick() -> Bool {
         // Verify GM using safe path detection
-        guard let detectedPath = detectGMPathSafely() else {
-            logMessages.append(NSLocalizedString("GMNotFound", comment: ""))
+        guard let detectedPath = GraphicsMagickHelper.detectGMPathSafely(logHandler: { message in
+            self.logMessages.append(message)
+        }) else {
             return false
         }
 
@@ -549,30 +419,9 @@ class ImageProcessor: ObservableObject {
         gmPath = detectedPath
 
         // Check GraphicsMagick version
-        let task = Process()
-        task.executableURL = URL(fileURLWithPath: gmPath)
-        task.arguments = ["--version"]
-        let pipe = Pipe()
-        task.standardOutput = pipe
-        task.standardError = pipe
-
-        do {
-            try task.run()
-            task.waitUntilExit()
-            let outputData = pipe.fileHandleForReading.readDataToEndOfFile()
-            let outputMessage = String(data: outputData, encoding: .utf8) ?? NSLocalizedString("CannotReadOutput", comment: "")
-            if task.terminationStatus != 0 {
-                logMessages.append(NSLocalizedString("GMNotFound", comment: ""))
-                return false
-            } else {
-                logMessages.append(String(format: NSLocalizedString("GraphicsMagickVersion", comment: ""), outputMessage))
-            }
-        } catch {
-            logMessages.append(NSLocalizedString("GMNotFound", comment: ""))
-            return false
-        }
-        
-        return true
+        return GraphicsMagickHelper.verifyGraphicsMagick(gmPath: gmPath, logHandler: { message in
+            self.logMessages.append(message)
+        })
     }
     
     // Process directories
@@ -599,7 +448,7 @@ class ImageProcessor: ObservableObject {
             }
             
             // Process all subdirectories
-            let allFailedFiles = self.processSubdirectories(
+            let allFailedFiles = processSubdirectories(
                 subdirectories: subdirectories,
                 outputDir: outputDir,
                 parameters: parameters,
@@ -607,7 +456,7 @@ class ImageProcessor: ObservableObject {
             )
             
             // Finalize processing
-            self.finalizeProcessing(subdirectories: subdirectories, failedFiles: allFailedFiles)
+            finalizeProcessing(subdirectories: subdirectories, failedFiles: allFailedFiles)
             
         } catch {
             DispatchQueue.main.async {
@@ -695,7 +544,7 @@ class ImageProcessor: ObservableObject {
         for subdirectory in subdirectories {
             // Check cancellation flag
             var cancel = false
-            self.activeTasksQueue.sync {
+            activeTasksQueue.sync {
                 cancel = self.shouldCancelProcessing
             }
             if cancel { break }
@@ -716,7 +565,7 @@ class ImageProcessor: ObservableObject {
             }
             
             // Get all image files in this subdirectory
-            let imageFiles = self.getImageFiles(subdirectory)
+            let imageFiles = getImageFiles(subdirectory)
             
             if imageFiles.isEmpty {
                 DispatchQueue.main.async {
@@ -732,7 +581,7 @@ class ImageProcessor: ObservableObject {
             
             // Split into batches using user-defined batch size
             let batchSize = validateBatchSize(parameters.batchSize)
-            let batches = self.splitIntoBatches(imageFiles, batchSize: batchSize)
+            let batches = splitIntoBatches(imageFiles, batchSize: batchSize)
             
             // Add all batches to the collection
             for batch in batches {
@@ -760,7 +609,7 @@ class ImageProcessor: ObservableObject {
         for batch in allBatches {
             // Check cancellation flag
             var cancel = false
-            self.activeTasksQueue.sync {
+            activeTasksQueue.sync {
                 cancel = self.shouldCancelProcessing
             }
             if cancel { break }
@@ -815,19 +664,19 @@ class ImageProcessor: ObservableObject {
     private func finalizeProcessing(subdirectories: [URL], failedFiles: [String]) {
         // Check if processing was cancelled
         var wasCancelled = false
-        self.activeTasksQueue.sync {
+        activeTasksQueue.sync {
             wasCancelled = self.shouldCancelProcessing
         }
         
         // Get final processed count
         var finalProcessedCount = 0
-        self.processedCountQueue.sync {
+        processedCountQueue.sync {
             finalProcessedCount = self.totalImagesProcessed
         }
         
         // Calculate processing time
-        let processingTime = Int(Date().timeIntervalSince(self.processingStartTime ?? Date()))
-        let timeMessage = self.formatProcessingTime(processingTime)
+        let processingTime = Int(Date().timeIntervalSince(processingStartTime ?? Date()))
+        let timeMessage = formatProcessingTime(processingTime)
         
         DispatchQueue.main.async {
             if wasCancelled {
@@ -881,34 +730,3 @@ class ImageProcessor: ObservableObject {
         center.add(request)
     }
 }
-
-// Thread-safe array implementation
-class ThreadSafeArray<T> {
-    private var array = [T]()
-    private let queue: DispatchQueue
-    
-    init(queue: DispatchQueue) {
-        self.queue = queue
-    }
-    
-    func append(_ element: T) {
-        queue.sync {
-            array.append(element)
-        }
-    }
-    
-    func append(contentsOf elements: [T]) {
-        queue.sync {
-            array.append(contentsOf: elements)
-        }
-    }
-    
-    func getAll() -> [T] {
-        var result = [T]()
-        queue.sync {
-            result = array
-        }
-        return result
-    }
-}
-
