@@ -72,7 +72,10 @@
 /* Log messages for starting image processing and GraphicsMagick check */
 "StartProcessingWithUnsharp" = "开始处理图片，宽度阈值：%d，Resize 高度：%d，输出质量：%d，线程数：%d，Unsharp：%.1fx%.1f+%.1f+%.2f，Colorspace GRAY：%@";
 "StartProcessingNoUnsharp" = "开始处理图片，宽度阈值：%d，Resize 高度：%d，输出质量：%d，线程数：%d，Unsharp：禁用，Colorspace GRAY：%@";
-"GMNotFound" = "未找到 GraphicsMagick";
+"GMNotFoundViaWhich" = "未能通过 `which` 命令找到 GraphicsMagick（gm）。请确认已正确安装。";
+"GMWhichCommandFailed" = "尝试执行 `which gm` 命令时失败，可能是权限或环境变量问题。";
+"GMExecutionFailed" = "找到 gm 可执行文件，但运行失败。请检查是否可执行或版本兼容性问题。";
+"GMExecutionException" = "运行 gm 时出现异常，可能未正确安装或权限不足。";
 
 /* Gray colorspace states */
 "GrayEnabled" = "启用";

@@ -72,7 +72,10 @@
 /* Log messages for starting image processing and GraphicsMagick check */
 "StartProcessingWithUnsharp" = "処理開始｜幅閾値:%d｜リサイズ高：%d｜品質：%d｜スレッド数：%d｜アンシャープ：%.1fx%.1f+%.1f+%.2f｜グレー：%@";
 "StartProcessingNoUnsharp" = "処理開始｜幅閾値:%d｜リサイズ高：%d｜品質：%d｜スレッド数：%d｜アンシャープ：無効｜グレー：%@";
-"GMNotFound" = "GraphicsMagick が見つかりません";
+"GMNotFoundViaWhich" = "`which` コマンドで GraphicsMagick（gm）を見つけられませんでした。正しくインストールされているか確認してください。";
+"GMWhichCommandFailed" = "`which gm` コマンドの実行に失敗しました。パーミッションや環境変数が原因の可能性があります。";
+"GMExecutionFailed" = "gm 実行ファイルは見つかりましたが、実行に失敗しました。権限や互換性を確認してください。";
+"GMExecutionException" = "gm を実行中に例外が発生しました。インストール不備やパーミッションの問題が考えられます。";
 
 /* Gray colorspace states */
 "GrayEnabled" = "有効";
