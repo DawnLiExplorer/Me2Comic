@@ -238,6 +238,16 @@ class GraphicsMagickHelper {
 
             var result: [String: (width: Int, height: Int)] = [:]
 
+            // Create a mapping from filename to full paths to handle duplicate filenames
+            var filenameToPathsMap: [String: [String]] = [:]
+            for imagePath in imagePaths {
+                let filename = URL(fileURLWithPath: imagePath).lastPathComponent
+                if filenameToPathsMap[filename] == nil {
+                    filenameToPathsMap[filename] = []
+                }
+                filenameToPathsMap[filename]?.append(imagePath)
+            }
+
             let lines = output.components(separatedBy: .newlines)
             for line in lines {
                 let trimmedLine = line.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -251,9 +261,22 @@ class GraphicsMagickHelper {
                 else { continue }
 
                 let filename = components[0]
-                // Match with full path
-                if let fullPath = imagePaths.first(where: { $0.hasSuffix(filename) }) {
-                    result[fullPath] = (width: width, height: height)
+
+                // Match the path precisely
+                if let possiblePaths = filenameToPathsMap[filename] {
+                    if possiblePaths.count == 1 {
+                        // Unique filename, match directly
+                        result[possiblePaths[0]] = (width: width, height: height)
+                    } else {
+                        // Multiple identical filenames, require more precise matching
+                        // Since gm identify returns only the filename, match the first unmatched path in order
+                        for path in possiblePaths {
+                            if result[path] == nil {
+                                result[path] = (width: width, height: height)
+                                break
+                            }
+                        }
+                    }
                 }
             }
 
@@ -261,33 +284,5 @@ class GraphicsMagickHelper {
         } catch {
             return [:]
         }
-    }
-
-    private static func temporaryBatchFile(for paths: [String]) -> URL {
-        let tempFile = FileManager.default.temporaryDirectory
-            .appendingPathComponent("gm_batch_\(UUID().uuidString).txt")
-
-        let content = paths.map { escapePathForShell($0) }.joined(separator: "\n")
-        try? content.write(to: tempFile, atomically: true, encoding: .utf8)
-
-        return tempFile
-    }
-
-    private static func parseBatchDimensions(output: String, imagePaths: [String]) -> [String: (width: Int, height: Int)] {
-        var result = [String: (Int, Int)]()
-        let pathSet = Set(imagePaths)
-
-        output.enumerateLines { line, _ in
-            let components = line.split(separator: " ", maxSplits: 2, omittingEmptySubsequences: true)
-            guard components.count >= 3,
-                  let width = Int(components[1]),
-                  let height = Int(components[2]) else { return }
-
-            let fullPath = String(components[0]).replacingOccurrences(of: "//", with: "/")
-            if pathSet.contains(fullPath) {
-                result[fullPath] = (width, height)
-            }
-        }
-        return result
     }
 }
