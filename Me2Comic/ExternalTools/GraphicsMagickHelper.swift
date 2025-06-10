@@ -203,4 +203,91 @@ class GraphicsMagickHelper {
             return nil
         }
     }
+
+    /// Get dimensions for multiple images in a single gm identify call
+    /// - Parameters:
+    ///   - imagePaths: Array of image file paths
+    ///   - gmPath: Path to GraphicsMagick executable
+    /// - Returns: Dictionary mapping image paths to their dimensions
+    static func getBatchImageDimensions(imagePaths: [String], gmPath: String) -> [String: (width: Int, height: Int)] {
+        guard !imagePaths.isEmpty else { return [:] }
+
+        let dimensionsTask = Process()
+        dimensionsTask.executableURL = URL(fileURLWithPath: gmPath)
+
+        // Use tab as delimiter
+        var arguments = ["identify", "-format", "%f\t%w\t%h\n"]
+        arguments.append(contentsOf: imagePaths)
+        dimensionsTask.arguments = arguments
+
+        let pipe = Pipe()
+        dimensionsTask.standardOutput = pipe
+        dimensionsTask.standardError = pipe
+
+        do {
+            try dimensionsTask.run()
+            dimensionsTask.waitUntilExit()
+
+            let data = pipe.fileHandleForReading.readDataToEndOfFile()
+            guard dimensionsTask.terminationStatus == 0,
+                  let output = String(data: data, encoding: .utf8),
+                  !output.isEmpty
+            else {
+                return [:]
+            }
+
+            var result: [String: (width: Int, height: Int)] = [:]
+
+            let lines = output.components(separatedBy: .newlines)
+            for line in lines {
+                let trimmedLine = line.trimmingCharacters(in: .whitespacesAndNewlines)
+                if trimmedLine.isEmpty { continue }
+
+                // Split by tab character
+                let components = trimmedLine.components(separatedBy: "\t")
+                guard components.count == 3,
+                      let width = Int(components[1]),
+                      let height = Int(components[2])
+                else { continue }
+
+                let filename = components[0]
+                // Match with full path
+                if let fullPath = imagePaths.first(where: { $0.hasSuffix(filename) }) {
+                    result[fullPath] = (width: width, height: height)
+                }
+            }
+
+            return result
+        } catch {
+            return [:]
+        }
+    }
+
+    private static func temporaryBatchFile(for paths: [String]) -> URL {
+        let tempFile = FileManager.default.temporaryDirectory
+            .appendingPathComponent("gm_batch_\(UUID().uuidString).txt")
+
+        let content = paths.map { escapePathForShell($0) }.joined(separator: "\n")
+        try? content.write(to: tempFile, atomically: true, encoding: .utf8)
+
+        return tempFile
+    }
+
+    private static func parseBatchDimensions(output: String, imagePaths: [String]) -> [String: (width: Int, height: Int)] {
+        var result = [String: (Int, Int)]()
+        let pathSet = Set(imagePaths)
+
+        output.enumerateLines { line, _ in
+            let components = line.split(separator: " ", maxSplits: 2, omittingEmptySubsequences: true)
+            guard components.count >= 3,
+                  let width = Int(components[1]),
+                  let height = Int(components[2]) else { return }
+
+            let fullPath = String(components[0]).replacingOccurrences(of: "//", with: "/")
+            if pathSet.contains(fullPath) {
+                result[fullPath] = (width, height)
+            }
+        }
+        return result
+    }
 }

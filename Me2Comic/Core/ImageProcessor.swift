@@ -83,159 +83,156 @@ class ImageProcessor: ObservableObject {
             cancel = self.shouldCancelProcessing
         }
         if cancel { return 0 }
-        
+            
         let fileManager = FileManager.default
         var processedCount = 0
-        
-        // If no image files, return immediately
-        if images.isEmpty { return 0 }
-        
-        // Create temporary batch file with unique name
-        let batchFilePath = FileManager.default.temporaryDirectory.appendingPathComponent("me2comic_batch_\(UUID().uuidString).txt")
-        var batchCommands = ""
-        
-        // Process each image file
-        for imageFile in images {
-            // Check cancellation flag again
-            activeTasksQueue.sync {
-                cancel = self.shouldCancelProcessing
-            }
-            if cancel { break }
             
+        // Early return if no images
+        if images.isEmpty { return 0 }
+            
+        // STEP 1: Batch get dimensions for all valid images
+        let supportedExtensions = ["jpg", "jpeg", "png"]
+        let validImages = images.filter { supportedExtensions.contains($0.pathExtension.lowercased()) }
+            
+        let batchDimensions = GraphicsMagickHelper.getBatchImageDimensions(
+            imagePaths: validImages.map { $0.path },
+            gmPath: gmPath
+        )
+            
+        // STEP 2: Prepare batch file
+        let batchFilePath = fileManager.temporaryDirectory
+            .appendingPathComponent("me2comic_batch_\(UUID().uuidString).txt")
+        defer { try? fileManager.removeItem(at: batchFilePath) }
+            
+        var batchCommands = ""
+            
+        // STEP 3: Process each image
+        for imageFile in images {
+            activeTasksQueue.sync { cancel = self.shouldCancelProcessing }
+            if cancel { break }
+                
             let filename = imageFile.lastPathComponent
             let filenameWithoutExt = imageFile.deletingPathExtension().lastPathComponent
             let outputBasePath = outputDir.appendingPathComponent(filenameWithoutExt).path
-            
-            // Get image dimensions
-            if let dimensions = GraphicsMagickHelper.getImageDimensions(imagePath: imageFile.path, gmPath: gmPath) {
-                let width = dimensions.width
-                let height = dimensions.height
                 
-                // Process based on width threshold
-                if width < widthThreshold {
-                    // Process entire image (single image processing logic)
-                    let command = GraphicsMagickHelper.buildConvertCommand(
-                        inputPath: imageFile.path,
-                        outputPath: "\(outputBasePath).jpg",
-                        cropParams: nil,
-                        resizeHeight: resizeHeight,
-                        quality: quality,
-                        unsharpRadius: unsharpRadius,
-                        unsharpSigma: unsharpSigma,
-                        unsharpAmount: unsharpAmount,
-                        unsharpThreshold: unsharpThreshold,
-                        useGrayColorspace: useGrayColorspace
-                    )
-                    batchCommands.append(command + "\n")
-                    processedCount += 1
-                } else {
-                    // Split into left and right parts
-                    let cropWidth = width / 2
-                    
-                    // Process right half (-1.jpg)
-                    let rightCropCommand = GraphicsMagickHelper.buildConvertCommand(
-                        inputPath: imageFile.path,
-                        outputPath: "\(outputBasePath)-1.jpg",
-                        cropParams: "\(cropWidth)x\(height)+\(cropWidth)+0",
-                        resizeHeight: resizeHeight,
-                        quality: quality,
-                        unsharpRadius: unsharpRadius,
-                        unsharpSigma: unsharpSigma,
-                        unsharpAmount: unsharpAmount,
-                        unsharpThreshold: unsharpThreshold,
-                        useGrayColorspace: useGrayColorspace
-                    )
-                    batchCommands.append(rightCropCommand + "\n")
-                    
-                    // Process left half (-2.jpg)
-                    let leftCropCommand = GraphicsMagickHelper.buildConvertCommand(
-                        inputPath: imageFile.path,
-                        outputPath: "\(outputBasePath)-2.jpg",
-                        cropParams: "\(cropWidth)x\(height)+0+0",
-                        resizeHeight: resizeHeight,
-                        quality: quality,
-                        unsharpRadius: unsharpRadius,
-                        unsharpSigma: unsharpSigma,
-                        unsharpAmount: unsharpAmount,
-                        unsharpThreshold: unsharpThreshold,
-                        useGrayColorspace: useGrayColorspace
-                    )
-                    batchCommands.append(leftCropCommand + "\n")
-                    processedCount += 1
-                }
+            // Get dimensions with batch-first fallback
+            var dimensions: (width: Int, height: Int)?
+            if let batchDim = batchDimensions[imageFile.path] {
+                dimensions = batchDim
             } else {
+                dimensions = GraphicsMagickHelper.getImageDimensions(
+                    imagePath: imageFile.path,
+                    gmPath: gmPath
+                )
+            }
+                
+            guard let dimensions = dimensions else {
                 failedFiles.append(filename)
+                continue
+            }
+                
+            let (width, height) = dimensions
+                
+            if width < widthThreshold {
+                // Single image processing
+                let command = GraphicsMagickHelper.buildConvertCommand(
+                    inputPath: imageFile.path,
+                    outputPath: "\(outputBasePath).jpg",
+                    cropParams: nil,
+                    resizeHeight: resizeHeight,
+                    quality: quality,
+                    unsharpRadius: unsharpRadius,
+                    unsharpSigma: unsharpSigma,
+                    unsharpAmount: unsharpAmount,
+                    unsharpThreshold: unsharpThreshold,
+                    useGrayColorspace: useGrayColorspace
+                )
+                batchCommands.append(command + "\n")
+                processedCount += 1
+            } else {
+                // Split processing
+                let cropWidth = width / 2
+                    
+                // Right half
+                batchCommands.append(GraphicsMagickHelper.buildConvertCommand(
+                    inputPath: imageFile.path,
+                    outputPath: "\(outputBasePath)-1.jpg",
+                    cropParams: "\(cropWidth)x\(height)+\(cropWidth)+0",
+                    resizeHeight: resizeHeight,
+                    quality: quality,
+                    unsharpRadius: unsharpRadius,
+                    unsharpSigma: unsharpSigma,
+                    unsharpAmount: unsharpAmount,
+                    unsharpThreshold: unsharpThreshold,
+                    useGrayColorspace: useGrayColorspace
+                ) + "\n")
+                    
+                // Left half
+                batchCommands.append(GraphicsMagickHelper.buildConvertCommand(
+                    inputPath: imageFile.path,
+                    outputPath: "\(outputBasePath)-2.jpg",
+                    cropParams: "\(cropWidth)x\(height)+0+0",
+                    resizeHeight: resizeHeight,
+                    quality: quality,
+                    unsharpRadius: unsharpRadius,
+                    unsharpSigma: unsharpSigma,
+                    unsharpAmount: unsharpAmount,
+                    unsharpThreshold: unsharpThreshold,
+                    useGrayColorspace: useGrayColorspace
+                ) + "\n")
+                    
+                processedCount += 1
             }
         }
-        
-        // If no commands or cancelled, clean up and return
-        if batchCommands.isEmpty || cancel {
-            try? fileManager.removeItem(at: batchFilePath)
+            
+        // Early exit if cancelled or no commands
+        guard !batchCommands.isEmpty, !cancel else {
             return processedCount
         }
-        
-        // Write batch file
+            
+        // STEP 4: Execute batch
         do {
             try batchCommands.write(to: batchFilePath, atomically: true, encoding: .utf8)
-            
-            // Execute batch command
+                
             let batchTask = Process()
             batchTask.executableURL = URL(fileURLWithPath: gmPath)
             batchTask.arguments = ["batch", "-stop-on-error", "off"]
-            
-            let inputPipe = Pipe()
-            let outputPipe = Pipe()
-            let errorPipe = Pipe()
-            batchTask.standardInput = inputPipe
-            batchTask.standardOutput = outputPipe
-            batchTask.standardError = errorPipe
-            
-            // Track active task
+                
+            let pipes = (input: Pipe(), output: Pipe(), error: Pipe())
+            batchTask.standardInput = pipes.input
+            batchTask.standardOutput = pipes.output
+            batchTask.standardError = pipes.error
+                
+            // Track task
             let managedTask = ManagedTask(process: batchTask)
-            activeTasksQueue.async {
-                self.activeTasks.append(managedTask)
-            }
-            
-            // Read batch file content and prepare data once
-            let batchContent = try String(contentsOf: batchFilePath)
-            let data = batchContent.data(using: .utf8)!
-            
+            activeTasksQueue.async { self.activeTasks.append(managedTask) }
+                
             try batchTask.run()
-            
-            // Write batch commands to stdin
-            inputPipe.fileHandleForWriting.write(data)
-            inputPipe.fileHandleForWriting.closeFile()
-            
+            try pipes.input.fileHandleForWriting.write(Data(contentsOf: batchFilePath))
+            pipes.input.fileHandleForWriting.closeFile()
+                
             batchTask.waitUntilExit()
-            
-            // Clean up completed task
-            activeTasksQueue.async {
-                self.activeTasks.removeAll { $0.id == managedTask.id }
-            }
-            
-            // Delete temporary batch file
-            try? fileManager.removeItem(at: batchFilePath)
-            
-            // Handle errors if any
+            activeTasksQueue.async { self.activeTasks.removeAll { $0.id == managedTask.id } }
+                
+            // Handle errors
             if batchTask.terminationStatus != 0 {
-                let errorData = errorPipe.fileHandleForReading.readDataToEndOfFile()
-                if let errorMessage = String(data: errorData, encoding: .utf8), !errorMessage.isEmpty {
+                if let error = String(
+                    data: pipes.error.fileHandleForReading.readDataToEndOfFile(),
+                    encoding: .utf8
+                ), !error.isEmpty {
                     DispatchQueue.main.async {
-                        self.logMessages.append(String(format: NSLocalizedString("BatchProcessFailed", comment: ""), errorMessage))
+                        self.logMessages.append("Batch failed: \(error)")
                     }
                 }
-                
-                // Add failed files to list
                 failedFiles.append(contentsOf: images.map { $0.lastPathComponent })
                 return 0
             }
-            
+                
             return processedCount
         } catch {
             DispatchQueue.main.async {
-                self.logMessages.append(String(format: NSLocalizedString("BatchProcessFailed", comment: ""), error.localizedDescription))
+                self.logMessages.append("Batch error: \(error.localizedDescription)")
             }
-            try? fileManager.removeItem(at: batchFilePath)
             return 0
         }
     }
@@ -500,7 +497,7 @@ class ImageProcessor: ObservableObject {
         // Thread-safe collection for failed files
         let failedFiles = ThreadSafeArray<String>(queue: failedFilesQueue)
         
-        // Prepare all batches
+        // Prepare all batches and pre-fetch dimensions
         prepareAllBatches(
             subdirectories: subdirectories,
             outputDir: outputDir,
