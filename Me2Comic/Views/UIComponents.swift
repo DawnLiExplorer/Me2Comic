@@ -372,3 +372,15 @@ struct LeftPanelView: View {
         .background(.leftPanelBackground)
     }
 }
+
+extension ParameterInputView: Equatable {
+    static func == (lhs: ParameterInputView, rhs: ParameterInputView) -> Bool {
+        lhs.title == rhs.title && lhs.text == rhs.text && lhs.isProcessing == rhs.isProcessing
+    }
+}
+
+extension ParameterDescription: Equatable {
+    static func == (lhs: ParameterDescription, rhs: ParameterDescription) -> Bool {
+        lhs.label == rhs.label && lhs.description == rhs.description
+    }
+}

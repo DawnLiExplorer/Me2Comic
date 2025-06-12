@@ -97,7 +97,7 @@ struct ImageProcessorView: View {
 
                 // Log console
                 // Use DecoratedView directly to reduce nesting
-                DecoratedView(content: LogTextView(text: processor.logMessages.joined(separator: "\n")))
+                DecoratedView(content: LogTextView(processor: processor))
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .padding(.bottom, 15)
                     .padding(.bottom, 5)
@@ -172,7 +172,7 @@ struct ImageProcessorView: View {
 
 // NSViewRepresentable wrapper for NSTextView
 struct LogTextView: NSViewRepresentable {
-    var text: String
+    @ObservedObject var processor: ImageProcessor
 
     func makeNSView(context: Context) -> NSScrollView {
         let scrollView = NSTextView.scrollableTextView()
@@ -184,13 +184,16 @@ struct LogTextView: NSViewRepresentable {
         textView.font = NSFont.monospacedSystemFont(ofSize: 12, weight: .regular)
         textView.textContainerInset = NSSize(width: 0, height: 0)
         scrollView.borderType = .noBorder
+        textView.string = processor.logMessages.joined(separator: "\n")
+        textView.scrollToEndOfDocument(nil)
         return scrollView
     }
 
     func updateNSView(_ nsView: NSScrollView, context: Context) {
         guard let textView = nsView.documentView as? NSTextView else { return }
-        if textView.string != text {
-            textView.string = text
+        let newText = processor.logMessages.joined(separator: "\n")
+        if textView.string != newText {
+            textView.string = newText
             textView.scrollToEndOfDocument(nil)
         }
     }
